@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Card} from 'react-native-elements';
+import MapView from 'react-native-maps';
 
 import database from './firebase/firebase';
 
@@ -76,12 +77,25 @@ class mapPage extends React.Component {
     render() {
         return (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Card>
-                    <Text>Map</Text>
-                </Card>
+                <MapView
+                    style={{
+                        left:0,
+                        right:0,
+                        top:0,
+                        bottom:0,
+                        position: 'absolute'
+                    }}
+                    region={{
+                        latitude: -36.856,
+                        longitude: 174.765644,
+                        latitudeDelta: 0.1,
+                        longitudeDelta: 0.1
+                    }}
+                />
             </View>
         );
     }
 }
+
 
 export default mapPage;
