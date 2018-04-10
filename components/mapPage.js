@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Card} from 'react-native-elements';
-import MapView from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 
 import database from './firebase/firebase';
 
@@ -91,7 +91,15 @@ class mapPage extends React.Component {
                         latitudeDelta: 0.1,
                         longitudeDelta: 0.1
                     }}
-                />
+                >
+                    <Marker
+                        coordinate={{
+                            latitude: -36.856,
+                            longitude: 174.765644,
+                        }}
+                    />
+
+                </MapView>
             </View>
         );
     }
