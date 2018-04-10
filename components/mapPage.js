@@ -92,12 +92,18 @@ class mapPage extends React.Component {
                         longitudeDelta: 0.1
                     }}
                 >
-                    <Marker
-                        coordinate={{
-                            latitude: -36.856,
-                            longitude: 174.765644,
-                        }}
-                    />
+
+                    {this.state.participants.map((person) => (
+                        <Marker
+                            title={`Hi my name is ${person.userName}, nice to Meet you!`}
+                            description={person.userName}
+                            coordinate={{
+                                latitude: person.lat,
+                                longitude: person.lng,
+                            }}
+                        />
+                    ))}
+
 
                 </MapView>
             </View>
