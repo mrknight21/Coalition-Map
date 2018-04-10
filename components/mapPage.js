@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Card} from 'react-native-elements';
+
 import database from './firebase/firebase';
 
 class mapPage extends React.Component {
@@ -24,18 +25,28 @@ class mapPage extends React.Component {
     componentDidMount() {
 
         try {
+
+            /* Using getCurrentPosition method on the geolocation to get the current location of user device every 5
+            seconds and then firing the showPosition method() */
+
             this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 5000);
+
+            // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
+
             const showPosition = (position) => {
-                console.log("Fired!");
-                console.log(position.coords.latitude)
-                console.log(position.coords.longitude)
+
+                console.log("getCurrentPosition working!");
+                console.log("Latitude: "+ position.coords.latitude + ", Longitude: " + position.coords.longitude);
+
                 database.ref('testMapA/testUser1').update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
             }
 
-            console.log("hello");
+
+            // Database query to get the details of the Map and store all users who need to be displayed in the State
+
             database.ref('testMapA')
                 .on('value', (snapshot) => {
                     const participants = [];

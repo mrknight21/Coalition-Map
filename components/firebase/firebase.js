@@ -11,7 +11,7 @@ const config = {
 
 firebase.initializeApp(config);
 
-console.log("CONNECTED")
+console.log("CONNECTED");
 
 const database = firebase.database();
 
