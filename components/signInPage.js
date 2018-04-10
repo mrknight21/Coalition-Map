@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Card } from 'react-native-elements';
+import { Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class signInPage extends React.Component {
     static navigationOptions = {
@@ -17,9 +18,17 @@ class signInPage extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Card>
-                    <Text>sign in page</Text>
-                </Card>
+                <Button
+                    icon={
+                        <Icon
+                            name='arrow-right'
+                            size={15}
+                            color='white'
+                        />
+                    }
+                    title='To setting up'
+                    onPress={() => this.props.navigation.navigate('setUp')}
+                />
             </View>
         );
     }
