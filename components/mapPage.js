@@ -2,12 +2,27 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
 
-const mapPage = () => (
-    <View>
-        <Card>
-            <Text>YOU are on the map page</Text>
-        </Card>
-    </View>
-);
+class mapPage extends React.Component {
+    static navigationOptions = {
+        title: 'Map',
+        headerStyle: {
+            backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+    };
+
+    render() {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Card>
+                <Text>Map</Text>
+                </Card>
+            </View>
+        );
+    }
+}
 
 export default mapPage;

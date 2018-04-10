@@ -2,12 +2,27 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
 
-const signInPage = () => (
-    <View>
-        <Card>
-            <Text>Welcome to the sign in page</Text>
-        </Card>
-    </View>
-);
+class signInPage extends React.Component {
+    static navigationOptions = {
+        title: 'log in',
+        headerStyle: {
+            backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+    };
+
+    render() {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Card>
+                    <Text>sign in page</Text>
+                </Card>
+            </View>
+        );
+    }
+}
 
 export default signInPage;

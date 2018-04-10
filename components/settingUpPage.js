@@ -2,12 +2,27 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Card } from 'react-native-elements';
 
-const settingUpPage = () => (
-    <View>
-        <Card>
-            <Text>YOU are on the setup page</Text>
-        </Card>
-    </View>
-);
+class settingUpPage extends React.Component {
+    static navigationOptions = {
+        title: 'Set Up',
+        headerStyle: {
+            backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+    };
+
+    render() {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Card>
+                    <Text>settingUpPage</Text>
+                </Card>
+            </View>
+        );
+    }
+}
 
 export default settingUpPage;
