@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import {Card} from 'react-native-elements';
+import {Card, Icon} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 
 import database from './firebase/firebase';
@@ -88,8 +88,8 @@ class mapPage extends React.Component {
                     region={{
                         latitude: -36.856,
                         longitude: 174.765644,
-                        latitudeDelta: 0.1,
-                        longitudeDelta: 0.1
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01
                     }}
                 >
 
@@ -101,7 +101,12 @@ class mapPage extends React.Component {
                                 latitude: person.lat,
                                 longitude: person.lng,
                             }}
-                        />
+                        >
+                            <Icon
+                                name='grade'
+                                color='green'
+                            />
+                        </Marker>
                     ))}
 
 
