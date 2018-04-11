@@ -6,8 +6,6 @@ import mapPage from './components/mapPage';
 import settingUpPage from './components/settingUpPage';
 import signInPage from './components/signInPage';
 
-
-
 const RootStack = StackNavigator(
     {
         signIn: {
@@ -31,12 +29,3 @@ export default class App extends React.Component {
         return <RootStack />;
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
