@@ -1,7 +1,11 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Button } from 'react-native-elements';
+import { Button, FormInput, Card, Divider } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+//import {FormLabel} from "react-native-elements/src/index.d";
+
+
+import LogInForm from "./logginForm";
 
 class signInPage extends React.Component {
     static navigationOptions = {
@@ -18,17 +22,7 @@ class signInPage extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Button
-                    icon={
-                        <Icon
-                            name='arrow-right'
-                            size={15}
-                            color='white'
-                        />
-                    }
-                    title='To setting up'
-                    onPress={() => this.props.navigation.navigate('setUp')}
-                />
+            <LogInForm navigation={this.props.navigation} />
             </View>
         );
     }
