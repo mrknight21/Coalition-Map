@@ -14,7 +14,7 @@ class mapPage extends React.Component {
     static navigationOptions = {
         title: 'Map',
         headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: '#397cf4',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -98,13 +98,16 @@ class mapPage extends React.Component {
                             title={`Hi my name is ${person.userName}, nice to Meet you!`}
                             description={person.userName}
                             coordinate={{
-                                latitude: person.lat,
-                                longitude: person.lng,
+                                latitude: parseFloat(person.lat),
+                                longitude: parseFloat(person.lng),
                             }}
                         >
                             <Icon
-                                name='grade'
-                                color='green'
+                                name='mood'
+                                color='orange'
+                                raised={true}
+                                reverse={true}
+                                reverseColor='white'
                             />
                         </Marker>
                     ))}
