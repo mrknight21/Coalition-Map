@@ -1,7 +1,5 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Button, FormInput, Card, Divider } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 //import {FormLabel} from "react-native-elements/src/index.d";
 
 
