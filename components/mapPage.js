@@ -8,13 +8,14 @@ import database from './firebase/firebase';
 class mapPage extends React.Component {
 
     state = {
-        participants: []
+        participants: [],
+        landmarks: []
     };
 
     static navigationOptions = {
         title: 'Map',
         headerStyle: {
-            backgroundColor: '#f4511e',
+            backgroundColor: '#397cf4',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -39,7 +40,7 @@ class mapPage extends React.Component {
                 console.log("getCurrentPosition working!");
                 console.log("Latitude: "+ position.coords.latitude + ", Longitude: " + position.coords.longitude);
 
-                database.ref('testMapA/testUser1').update({
+                database.ref('map001/users/user001').update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
@@ -48,21 +49,51 @@ class mapPage extends React.Component {
 
             // Database query to get the details of the Map and store all users who need to be displayed in the State
 
-            database.ref('testMapA')
+            database.ref('map001/users')
                 .on('value', (snapshot) => {
                     const participants = [];
                     snapshot.forEach((childSnapshot) => {
                         participants.push({
                             id: childSnapshot.key,
-                            userName: childSnapshot.child("userName").val().toString(),
+                            nameX: childSnapshot.child("name").val().toString(),
+                            description: childSnapshot.child('description').val().toString(),
                             lat: childSnapshot.child('lat').val().toString(),
-                            lng: childSnapshot.child('lng').val().toString()
+                            lng: childSnapshot.child('lng').val().toString(),
+                            shapeX: childSnapshot.child('shape').val().toString(),
+                            colorX: childSnapshot.child('color').val().toString(),
+
                             // ...childSnapshot.val()
                         });
                     })
                     console.log('parti2:');
                     console.log(participants);
                     this.setState(() => ({ participants: participants }));
+                }, (error) => {
+                    console.log("Error", error);
+                });
+
+
+        //    Second DB query to request landmark information and store to landmarks array in state
+
+            database.ref('map001/landmarks')
+                .on('value', (snapshot) => {
+                    const landmarks = [];
+                    snapshot.forEach((childSnapshot) => {
+                        landmarks.push({
+                            id: childSnapshot.key,
+                            nameX: childSnapshot.child("name").val().toString(),
+                            description: childSnapshot.child('description').val().toString(),
+                            lat: childSnapshot.child('lat').val().toString(),
+                            lng: childSnapshot.child('lng').val().toString(),
+                            shapeX: childSnapshot.child('shape').val().toString(),
+                            colorX: childSnapshot.child('color').val().toString(),
+
+                            // ...childSnapshot.val()
+                        });
+                    })
+                    console.log('parti2:');
+                    console.log(landmarks);
+                    this.setState(() => ({ landmarks: landmarks }));
                 }, (error) => {
                     console.log("Error", error);
                 });
@@ -94,21 +125,40 @@ class mapPage extends React.Component {
                 >
 
                     {this.state.participants.map((person) => (
+                    <Marker
+                        title={person.description}
+                        description={person.nameX}
+                        coordinate={{
+                            latitude: parseFloat(person.lat),
+                            longitude: parseFloat(person.lng),
+                        }}
+                    >
+                        <Icon
+                            name={person.shapeX}
+                            color={person.colorX}
+                            raised={true}
+                            reverse={true}
+                            reverseColor='white'
+                        />
+                    </Marker>
+                ))}
+
+
+                    {this.state.landmarks.map((mark) => (
                         <Marker
-                            title={`Hi my name is ${person.userName}, nice to Meet you!`}
-                            description={person.userName}
+                            title={mark.description}
+                            description={mark.nameX}
                             coordinate={{
-                                latitude: person.lat,
-                                longitude: person.lng,
+                                latitude: parseFloat(mark.lat),
+                                longitude: parseFloat(mark.lng),
                             }}
                         >
                             <Icon
-                                name='grade'
-                                color='green'
+                                name={mark.shapeX}
+                                color={mark.colorX}
                             />
                         </Marker>
                     ))}
-
 
                 </MapView>
             </View>
