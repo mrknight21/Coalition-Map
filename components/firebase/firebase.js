@@ -9,11 +9,11 @@ const config = {
     messagingSenderId: "380029306655"
 };
 
-firebase.initializeApp(config);
+fire = firebase.initializeApp(config);
 
 console.log("CONNECTED");
 
-const database = firebase.database();
-const auth = firebase.auth();
+// const database = firebase.database();
+// const auth = firebase.auth();
 
-export {firebase, database, auth as default};
+export default fire;

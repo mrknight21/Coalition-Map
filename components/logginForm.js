@@ -5,7 +5,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { Card,Button, FormLabel, FormInput, FormValidationMessage } from 'react-native-elements';
 
-import auth from './firebase/firebase';
+import firebase from './firebase/firebase';
 
 export default class LogginForm extends React.Component {
 
@@ -17,38 +17,33 @@ export default class LogginForm extends React.Component {
         };
     }
 
-    anynonymous_login(){
-        auth.signInAnonymously().catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // ...
-        });
-        auth.onAuthStateChanged(function(user) {
-            if (user) {
-                // User is signed in.
-                var isAnonymous = user.isAnonymous;
-                var uid = user.uid;
-                console.log(isAnonymous);
-                console.log(uid);
-            } else {
-                console.log("user sign out");
-            }
-        });
+    check_submit(mapcode){
+        console.log(mapcode);
+        this.props.navigation.navigate('setUp',this.state)
 
+        // var ref = firebase.database().ref(mapcode+"/");
+        // ref.once("value")
+        //     .then(function(snapshot) {
+        //         console.log(snapshot.val());
+        //         if (snapshot.val()){
+        //             console.log(snapshot.val());
+        //             {};
+        //         }else{
+        //           console.log("wrong code!!")
+        //         }
+        //     });
     }
 
 
-    render() {
+    render(){
         return (
     <View>
         <Card>
             <FormLabel>MAP CODE</FormLabel>
-            <FormInput onChangeText={(text) => this.setState({loggedIn, mapcode: text})}/>
-            <Button title="Go" onPress={() => this.props.navigation.navigate('map',this.state)}/>
-            <Button title="Login Any" onPress= {this.anynonymous_login}/>
+            <FormInput onChangeText={(text) => this.setState({mapcode: text})}/>
+            <Button title="Go" onPress={() => this.check_submit(this.state.mapcode)}/>
             <Text>OR</Text>
-            <Button title="Creat new map" onPress={() => this.props.navigation.navigate('setUp')}/>
+            <Button title="Creat new map" onPress={() => this.props.navigation.navigate('setUp', {loggedIn: false, mapcode: "",})}/>
         </Card>
     </View>
         );
