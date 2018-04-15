@@ -3,7 +3,7 @@ import {Text, View} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 
-import database from './firebase/firebase';
+import {database} from './firebase/firebase';
 
 class mapPage extends React.Component {
 
