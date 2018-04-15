@@ -12,26 +12,25 @@ export default class LogginForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loggedIn: false,
+            join: false,
             mapcode: "",
         };
     }
 
-    check_submit(mapcode){
-        console.log(mapcode);
-        this.props.navigation.navigate('setUp',this.state)
-
-        // var ref = firebase.database().ref(mapcode+"/");
-        // ref.once("value")
-        //     .then(function(snapshot) {
-        //         console.log(snapshot.val());
-        //         if (snapshot.val()){
-        //             console.log(snapshot.val());
-        //             {};
-        //         }else{
-        //           console.log("wrong code!!")
-        //         }
-        //     });
+    check_submit(){
+        this.ref = firebase.database().ref(this.state.mapcode+"/");
+        console.log(this.ref);
+        this.ref.once("value", (snapshot) => {
+            console.log(snapshot.val());
+            if (snapshot.val()){
+                console.log(snapshot.val());
+                this.setState({join:true});
+                this.props.navigation.navigate('setUp', this.state);
+            }else{
+                console.log("bind state");
+                console.log(this.state);
+            }
+        });
     }
 
 
@@ -41,9 +40,9 @@ export default class LogginForm extends React.Component {
         <Card>
             <FormLabel>MAP CODE</FormLabel>
             <FormInput onChangeText={(text) => this.setState({mapcode: text})}/>
-            <Button title="Go" onPress={() => this.check_submit(this.state.mapcode)}/>
+            <Button title="Go" onPress={() => this.check_submit()}/>
             <Text>OR</Text>
-            <Button title="Creat new map" onPress={() => this.props.navigation.navigate('setUp', {loggedIn: false, mapcode: "",})}/>
+            <Button title="Creat new map" onPress={() => this.props.navigation.navigate('setUp', {join: false, mapcode: "",})}/>
         </Card>
     </View>
         );

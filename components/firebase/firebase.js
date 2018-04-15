@@ -13,7 +13,4 @@ fire = firebase.initializeApp(config);
 
 console.log("CONNECTED");
 
-// const database = firebase.database();
-// const auth = firebase.auth();
-
 export default fire;
