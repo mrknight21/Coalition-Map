@@ -5,26 +5,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from './firebase/firebase';
 
 
-
-
-
-/*
-id:
-{
-color:
-description:
-lat:
-lng:
-name:
-shape:
-}
-
-map:
-{
-color:
-}
- */
-
 export default class settingUpPage extends React.Component {
     static navigationOptions = {
         title: 'Set Up',
@@ -49,54 +29,71 @@ export default class settingUpPage extends React.Component {
             name: null,
             shape: null
         }
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     anonymous_login() {
-        var isAnonymous = null;
-        var uid = null;
+
         firebase.auth().signInAnonymously().catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
             // ...
         });
-        uid = firebase.auth().onAuthStateChanged(function (user) {
+        uid = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in.
                 var isAnonymous = user.isAnonymous;
                 var uid = user.uid;
-                return uid;
+                console.log(this.props.navigation.state.params.join);
+                this.setState(() => ({uid:uid}));
+                if (!this.props.navigation.state.params.join){
+                    this.setState(() => ({mapcode:uid}));
+                    console.log("new map id set! "+uid);
+                }
             } else {
                 console.log("user sign out");
             }
         });
-        return uid;
     }
 
 
 
 
     componentDidMount() {
-        // Updating the `isSignedIn` and `userProfile` local state attributes when the Firebase Auth
-        // state changes.
-        const join = this.props.navigation.state.params.join;
-        console.log("didMount check:"+join);
-        const uid = this.anonymous_login();
-        this.setState({uid:uid});
-        console.log(uid);
-        if (!join){
-            this.setState({mapcode:uid});
-            console.log("new map id:" + this.state.mapcode);
-        }else{
-            console.log("DidMount else part: "+this.state.mapcode);
+        this.anonymous_login();
+    }
+
+
+
+    handleSubmit() {
+        const db = firebase.database();
+        const uid = this.state.uid;
+        const mapcode = this.state.mapcode;
+        const host = !this.props.navigation.state.params.join;
+        const user = {
+            name: this.state.name,
+            description: this.state.description,
+            color: this.state.uColor,
+            shape: this.state.shape,
+            host: host
+        };
+        const map ={
+            color:this.state.mapColor
+        };
+        db.ref(mapcode+'/users/'+uid).update(user);
+        if (host){
+            db.ref(mapcode+'/setting').set(map);
         }
+        this.props.navigation.navigate('map',{mapcode:this.state.mapcode, uid:this.state.uid});
+
     }
 
 
 
 
-    mapform (join) {
-        if (join) {
+    mapform () {
+        if (this.props.navigation.state.params.join) {
             return (<View><Text>MAP ID: {this.state.mapcode}</Text></View>);
         }else{
             return (
@@ -112,10 +109,7 @@ export default class settingUpPage extends React.Component {
 
 
     render(){
-        const params = this.props.navigation.state.params;
-        const settingMap = params ? params.join : null;
-        const mapcode = params ? params.mapcode : null;
-        const map_form = this.mapform(settingMap, mapcode);
+        const map_form = this.mapform();
 
         return (
             <View>
@@ -130,6 +124,7 @@ export default class settingUpPage extends React.Component {
                     <FormInput onChangeText={(text) => this.setState({shape: text})}/>
                     <Divider style={{ backgroundColor: 'blue' }} />
                     {map_form}
+                    <Button title="Submit" onPress={() => this.handleSubmit()}/>
                 </Card>
             </View>
         );

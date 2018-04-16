@@ -3,7 +3,7 @@ import {Text, View} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 
-import {database} from './firebase/firebase';
+import firebase from './firebase/firebase';
 
 class mapPage extends React.Component {
 
@@ -40,16 +40,16 @@ class mapPage extends React.Component {
                 console.log("getCurrentPosition working!");
                 console.log("Latitude: "+ position.coords.latitude + ", Longitude: " + position.coords.longitude);
 
-                database.ref('map001/users/user001').update({
+                firebase.database().ref('map001/users/user001').update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
             }
 
 
-            // Database query to get the details of the Map and store all users who need to be displayed in the State
+            // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
 
-            database.ref('map001/users')
+            firebase.database().ref('map001/users')
                 .on('value', (snapshot) => {
                     const participants = [];
                     snapshot.forEach((childSnapshot) => {
@@ -75,7 +75,7 @@ class mapPage extends React.Component {
 
         //    Second DB query to request landmark information and store to landmarks array in state
 
-            database.ref('map001/landmarks')
+            firebase.database().ref('map001/landmarks')
                 .on('value', (snapshot) => {
                     const landmarks = [];
                     snapshot.forEach((childSnapshot) => {
