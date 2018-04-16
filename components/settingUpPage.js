@@ -71,22 +71,37 @@ export default class settingUpPage extends React.Component {
         const uid = this.state.uid;
         const mapcode = this.state.mapcode;
         const host = !this.props.navigation.state.params.join;
-        const user = {
-            name: this.state.name,
-            description: this.state.description,
-            color: this.state.uColor,
-            shape: this.state.shape,
-            host: host
-        };
-        const map ={
-            color:this.state.mapColor
-        };
-        db.ref(mapcode+'/users/'+uid).update(user);
-        if (host){
-            db.ref(mapcode+'/setting').set(map);
-        }
-        this.props.navigation.navigate('map',{mapcode:this.state.mapcode, uid:this.state.uid});
+        var lat = null;
+        var lng = null;
 
+
+
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            lat = position.coords.latitude;
+            lng = position.coords.longitude;
+
+            console.log("lat: "+lat+" lng: "+lng );
+
+            const user = {
+                name: this.state.name,
+                description: this.state.description,
+                color: this.state.uColor,
+                shape: this.state.shape,
+                host: host,
+                lat: lat,
+                lng: lng
+            };
+            const map ={
+                color:this.state.mapColor
+            };
+            db.ref(mapcode+'/users/'+uid).update(user);
+            if (host){
+                db.ref(mapcode+'/setting').set(map);
+            }
+            this.props.navigation.navigate('map',{mapcode:this.state.mapcode, uid:this.state.uid});
+
+        });
     }
 
 

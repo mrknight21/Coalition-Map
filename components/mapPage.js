@@ -7,10 +7,7 @@ import firebase from './firebase/firebase';
 
 class mapPage extends React.Component {
 
-    state = {
-        participants: [],
-        landmarks: []
-    };
+
 
     static navigationOptions = {
         title: 'Map',
@@ -22,6 +19,16 @@ class mapPage extends React.Component {
             fontWeight: 'bold',
         },
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            participants: [],
+            landmarks: []
+        };
+        this.mapcode = this.props.navigation.state.params.mapcode;
+        this.uid = this.props.navigation.state.params.uid;
+    }
 
     // // ---------------- Component lifecycle methods -----------------------------
     componentDidMount() {
@@ -40,16 +47,16 @@ class mapPage extends React.Component {
                 console.log("getCurrentPosition working!");
                 console.log("Latitude: "+ position.coords.latitude + ", Longitude: " + position.coords.longitude);
 
-                firebase.database().ref('map001/users/user001').update({
+                firebase.database().ref(this.mapcode+'/users/'+this.uid).update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
-            }
+            };
 
 
             // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
 
-            firebase.database().ref('map001/users')
+            firebase.database().ref(this.mapcode+'/users')
                 .on('value', (snapshot) => {
                     const participants = [];
                     snapshot.forEach((childSnapshot) => {
@@ -75,7 +82,7 @@ class mapPage extends React.Component {
 
         //    Second DB query to request landmark information and store to landmarks array in state
 
-            firebase.database().ref('map001/landmarks')
+            firebase.database().ref(this.mapcode+'/landmarks')
                 .on('value', (snapshot) => {
                     const landmarks = [];
                     snapshot.forEach((childSnapshot) => {
