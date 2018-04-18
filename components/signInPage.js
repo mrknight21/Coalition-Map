@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import {Text, View} from 'react-native';
 //import {FormLabel} from "react-native-elements/src/index.d";
 
 
@@ -19,8 +19,8 @@ class signInPage extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <LogInForm navigation={this.props.navigation} />
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                <LogInForm navigation={this.props.navigation}/>
             </View>
         );
     }

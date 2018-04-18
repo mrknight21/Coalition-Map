@@ -2,10 +2,12 @@
  * Created by Administer on 10/04/2018.
  */
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, ScrollView, Keyboard, KeyboardAvoidingView} from 'react-native';
 import {Card, Button, FormLabel, FormInput, Icon, FormValidationMessage} from 'react-native-elements';
 
 import firebase from './firebase/firebase';
+
+Keyboard.dismiss();
 
 export default class LogginForm extends React.Component {
 
@@ -36,21 +38,73 @@ export default class LogginForm extends React.Component {
 
     render() {
         return (
-            <View>
-                <Card>
-                    <FormLabel>MAP CODE</FormLabel>
-                    <FormInput
-                        onChangeText={(text) => this.setState({mapcode: text})}
-                        placeholder="Hello Enter the map code to proceed"
+            <ScrollView
+                style={{
+                    padding: 1,
+                }}
+            >
+                <Card
+                    containerStyle={{
+                        width: 350,
+                        height: 300,
+                        // padding: 1,
+                        marginTop: 100
+                    }}
+                >
+                    <View>
+                        <FormLabel>MAP CODE</FormLabel>
+                        <FormInput
+                            onChangeText={(text) => this.setState({mapcode: text})}
+                            placeholder="Hello Enter the mapp code to proceed"
+                        >
+                        </FormInput>
+                        <FormValidationMessage>{'This field required'}</FormValidationMessage>
+                    </View>
+
+                    <View
+                        style={{
+                            alignItems: "center",
+                            justifyContent: 'center'
+                        }}
                     >
-                    </FormInput>
-                    <FormValidationMessage>{'This field is required'}</FormValidationMessage>
-                    <Button title="Go" onPress={() => this.check_submit()}/>
+                        <Button
+                            title="Go"
+                            onPress={() => this.check_submit()}
+                            buttonStyle={{
+                                backgroundColor: "purple",
+                                width: 300,
+                                height: 45,
+                                borderColor: "transparent",
+                                borderWidth: 0,
+                                borderRadius: 5
+                            }}
+                        />
+                    </View>
+
                     <Text>OR</Text>
-                    <Button title="Create new map"
-                            onPress={() => this.props.navigation.navigate('setUp', {join: false, mapcode: "",})}/>
+
+                    <View
+                        style={{
+                            alignItems: "center",
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <Button title="Create new map"
+                                onPress={() => this.props.navigation.navigate('setUp', {join: false, mapcode: "",})}
+                                buttonStyle={{
+                                    backgroundColor: "orange",
+                                    width: 300,
+                                    height: 45,
+                                    borderColor: "transparent",
+                                    borderWidth: 0,
+                                    borderRadius: 5
+                                }}
+                        />
+                    </View>
+
+
                 </Card>
-            </View>
+            </ScrollView>
         );
     }
 }
