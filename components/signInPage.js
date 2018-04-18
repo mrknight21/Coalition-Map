@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 //import {FormLabel} from "react-native-elements/src/index.d";
 
 
-import LogInForm from "./logginForm";
+import LogInForm from "./loginForm";
 
 class signInPage extends React.Component {
     static navigationOptions = {

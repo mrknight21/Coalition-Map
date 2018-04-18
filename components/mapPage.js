@@ -110,6 +110,20 @@ class mapPage extends React.Component {
         }
     }
 
+    //When the map component dismounts, the interval updating current location is cleared
+    //And the map entry is deleted.
+    componentWillUnmount() {
+        try {
+
+            clearInterval(this.interval);
+
+            firebase.database().ref(this.mapcode+'/users/'+this.uid).remove();
+
+        } catch (e) {
+            console.log("error", e);
+        }
+    }
+
 
     //--------------------------- rendering method ---------------------------
     render() {
