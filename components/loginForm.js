@@ -2,11 +2,11 @@
  * Created by Administer on 10/04/2018.
  */
 import React from 'react';
-import {Text, View, ScrollView, Keyboard, KeyboardAvoidingView} from 'react-native';
-import {Card, Button, FormLabel, FormInput, Icon, FormValidationMessage} from 'react-native-elements';
+import {Text, View, ScrollView, Keyboard, KeyboardAvoidingView,  StyleSheet, Image} from 'react-native';
+import {Card, Button, FormLabel, FormInput, FormValidationMessage} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import firebase from './firebase/firebase';
-
 Keyboard.dismiss();
 
 export default class LogginForm extends React.Component {
@@ -38,27 +38,29 @@ export default class LogginForm extends React.Component {
 
     render() {
         return (
-            <ScrollView
-                style={{
-                    padding: 1,
-                }}
-            >
+            <ScrollView style={styles.container}>
+                <View style={styles.logoContainer}>
+                    <Image
+                    style={styles.logo}
+                    source={require('../assets/map_icon.png')}/>
+                </View>
+
                 <Card
-                    containerStyle={{
-                        width: 350,
-                        height: 300,
-                        // padding: 1,
-                        marginTop: 100
-                    }}
+                    title={"Coalition"}
+                    containerStyle={styles.card}
+                    titleStyle={styles.titleText}
                 >
                     <View>
-                        <FormLabel>MAP CODE</FormLabel>
+                        <FormLabel><Icon
+                            name='map-o'
+                            size={20}
+                            color='black'
+                        />    MAP CODE</FormLabel>
                         <FormInput
                             onChangeText={(text) => this.setState({mapcode: text})}
                             placeholder="Hello Enter the mapp code to proceed"
                         >
                         </FormInput>
-                        <FormValidationMessage>{'This field required'}</FormValidationMessage>
                     </View>
 
                     <View
@@ -70,19 +72,11 @@ export default class LogginForm extends React.Component {
                         <Button
                             title="Go"
                             onPress={() => this.check_submit()}
-                            buttonStyle={{
-                                backgroundColor: "purple",
-                                width: 300,
-                                height: 45,
-                                borderColor: "transparent",
-                                borderWidth: 0,
-                                borderRadius: 5
-                            }}
+                            buttonStyle={styles.button}
+                            backgroundColor='orange'
                         />
                     </View>
-
-                    <Text>OR</Text>
-
+                    <Text style={styles.or}>OR</Text>
                     <View
                         style={{
                             alignItems: "center",
@@ -91,21 +85,61 @@ export default class LogginForm extends React.Component {
                     >
                         <Button title="Create new map"
                                 onPress={() => this.props.navigation.navigate('setUp', {join: false, mapcode: "",})}
-                                buttonStyle={{
-                                    backgroundColor: "orange",
-                                    width: 300,
-                                    height: 45,
-                                    borderColor: "transparent",
-                                    borderWidth: 0,
-                                    borderRadius: 5
-                                }}
+                                buttonStyle={styles.button}
+                                backgroundColor='#03A9F4'
                         />
                     </View>
-
-
                 </Card>
             </ScrollView>
         );
     }
 }
 
+const styles = StyleSheet.create({
+
+    container:{
+        alignContent:'center'
+    },
+
+    logoContainer:{
+        alignContent:'center',
+        alignItems:'center',
+        marginTop: 30
+    },
+
+    titleText:{
+        fontWeight: 'bold',
+        fontSize: 30,
+        textAlign:'center'
+    },
+
+    logo:{
+        width: 200,
+        height: 200,
+        alignContent: 'center'
+    },
+
+    card:{
+        width: 350,
+        padding: 20,
+        marginTop: 30,
+        borderRadius: 10
+    },
+
+    label:{
+      color:'grey',
+
+    },
+    or: {
+        fontWeight: 'bold',
+        fontSize: 15,
+        textAlign:'center'
+    },
+    button: {
+        width: 300,
+        height: 45,
+        borderColor: "transparent",
+        borderWidth: 0,
+        borderRadius: 5
+    },
+});
