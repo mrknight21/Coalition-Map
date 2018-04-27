@@ -32,8 +32,13 @@ export default class settingUpPage extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    anonymous_login() {
 
+    componentDidMount() {
+        this.anonymous_login();
+    }
+
+
+    anonymous_login() {
         firebase.auth().signInAnonymously().catch(function (error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -58,11 +63,6 @@ export default class settingUpPage extends React.Component {
     }
 
 
-    componentDidMount() {
-        this.anonymous_login();
-    }
-
-
     handleSubmit() {
         const db = firebase.database();
         const uid = this.state.uid;
@@ -70,7 +70,6 @@ export default class settingUpPage extends React.Component {
         const host = !this.props.navigation.state.params.join;
         var lat = null;
         var lng = null;
-
 
         navigator.geolocation.getCurrentPosition((position) => {
             lat = position.coords.latitude;
