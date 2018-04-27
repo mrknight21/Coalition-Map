@@ -34,7 +34,6 @@ class mapPage extends React.Component {
     componentDidMount() {
 
         try {
-
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 5
             seconds and then firing the showPosition method() */
 
@@ -43,10 +42,8 @@ class mapPage extends React.Component {
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
 
             const showPosition = (position) => {
-
                 console.log("getCurrentPosition working!");
                 console.log("Latitude: "+ position.coords.latitude + ", Longitude: " + position.coords.longitude);
-
                 firebase.database().ref(this.mapcode+'/users/'+this.uid).update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude

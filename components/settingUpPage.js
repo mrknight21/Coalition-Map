@@ -24,10 +24,10 @@ export default class settingUpPage extends React.Component {
             mapcode: this.props.navigation.state.params.mapcode,
             mapColor: null,
             uid: null,
-            uColor: null,
+            uColor: 'blue',
             description: null,
             name: null,
-            shape: null
+            shape: 'face'
         }
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -94,7 +94,6 @@ export default class settingUpPage extends React.Component {
                 db.ref(mapcode + '/setting').set(map);
             }
             this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid});
-
         });
     }
 
