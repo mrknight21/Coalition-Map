@@ -2,6 +2,7 @@ import React from 'react';
 import {Text, ScrollView, View, Picker, StyleSheet} from 'react-native';
 import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
 
 
@@ -65,17 +66,13 @@ export default class settingUpPage extends React.Component {
 
 
     randomToken () {
-
-
         var codes = [];
         const elements = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
-
         // while (true) {
         for (var i = 0; i < 4; i++) {
             randomElement = elements[(Math.random() * 46)|0];
             codes[i] = randomElement;
         }
-
             // let ref = firebase.database().ref(codes.join("") + "/");
             // console.log(this.ref);
             // ref.once("value", (snapshot) => {
@@ -135,7 +132,11 @@ export default class settingUpPage extends React.Component {
         if (!this.props.navigation.state.params.join) {
             return (
                 <View>
-                    <FormLabel>Map Color</FormLabel>
+                    <FormLabel><Icon
+                        name='map-o'
+                        size={20}
+                        color='orange'
+                    />   Map Color</FormLabel>
                     <Picker
                         selectedValue={this.state.mapColor}
                         onValueChange={(itemValue, itemIndex) => this.setState({mapColor: itemValue.toLowerCase()})}
@@ -173,17 +174,17 @@ export default class settingUpPage extends React.Component {
                     <ScrollView>
                     <View>
                         <FormLabel><Icon name="user-circle" size={20}
-                                         color='orange'/>  Name</FormLabel>
+                                         color='orange'/>   Name</FormLabel>
                         <FormInput onChangeText={(text) => {
                             this.setState({name: text.toLowerCase()});
                             this.checkComplete();}}/>
                         <FormLabel><Icon name="pencil" size={20}
-                                         color='orange'/>  Description</FormLabel>
+                                         color='orange'/>   Description</FormLabel>
                         <FormInput onChangeText={(text) => {
                             this.setState({description: text.toLowerCase()});
                             this.checkComplete();}}/>
                         <FormLabel><Icon name="adjust" size={20}
-                                         color='orange'/>  Color</FormLabel>
+                                         color='orange'/>   Color</FormLabel>
                         <Picker
                             selectedValue={this.state.uColor}
                             onValueChange={(itemValue, itemIndex) => this.setState({uColor: itemValue.toLowerCase()})}
@@ -199,7 +200,8 @@ export default class settingUpPage extends React.Component {
                             <Picker.Item label="grey" value="grey" />
                             <Picker.Item label="black" value="black" />
                         </Picker>
-                        <FormLabel>Shape</FormLabel>
+                        <FormLabel><Icon2 name="shape" size={20}
+                                          color='orange'/>   Shape</FormLabel>
                         <Picker
                             selectedValue={this.state.shape}
                             onValueChange={(itemValue, itemIndex) => this.setState({shape: itemValue.toLowerCase()})}
