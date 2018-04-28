@@ -10,7 +10,7 @@ class mapPage extends React.Component {
 
 
     static navigationOptions = {
-        title: 'Map',
+        title: 'Map: '+this.mapcode,
         headerStyle: {
             backgroundColor: '#397cf4',
         },

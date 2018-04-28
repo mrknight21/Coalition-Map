@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, Picker, StyleSheet} from 'react-native';
+import {Text, ScrollView, View, Picker, StyleSheet} from 'react-native';
 import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from './firebase/firebase';
@@ -25,9 +25,10 @@ export default class settingUpPage extends React.Component {
             mapColor: null,
             uid: null,
             uColor: 'blue',
-            description: null,
-            name: null,
-            shape: 'face'
+            description: "",
+            name: "",
+            shape: 'face',
+            complete:false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -121,6 +122,14 @@ export default class settingUpPage extends React.Component {
         });
     }
 
+    checkComplete(){
+        if (this.state.name !="" && this.state.description !=""){
+            this.setState({complete:true})
+        }else{
+            this.setState({complete:false})
+        }
+    }
+
 
     mapform() {
         if (!this.props.navigation.state.params.join) {
@@ -128,8 +137,11 @@ export default class settingUpPage extends React.Component {
                 <View>
                     <FormLabel>Map Color</FormLabel>
                     <Picker
-                        selectedValue={this.state.shape}
+                        selectedValue={this.state.mapColor}
                         onValueChange={(itemValue, itemIndex) => this.setState({mapColor: itemValue.toLowerCase()})}
+                        prompt="Map Color"
+                        style={styles.pickers}
+                        itemStyle={styles.picker_items}
                         // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                     >
                         <Picker.Item label="red" value="red" />
@@ -147,20 +159,37 @@ export default class settingUpPage extends React.Component {
 
     render() {
         const map_form = this.mapform();
+        const complete = this.state.complete;
+        const buttonC = complete ? "orange":"grey";
+
+        // if(this.state.name !== "" && this.state.description !=="" ){
+        //     this.setState({complete:true});
+        // }
 
 
         return (
             <View style={styles.container}>
-                <Card style={styles.card} title={"MAP ID: "+this.state.mapcode} titleStyle={styles.titleText}>
+                <Card containerStyle={styles.card} title={"MAP ID: "+this.state.mapcode} titleStyle={styles.titleText}>
+                    <ScrollView>
                     <View>
-                        <FormLabel>Name</FormLabel>
-                        <FormInput onChangeText={(text) => this.setState({name: text.toLowerCase()})}/>
-                        <FormLabel>Description</FormLabel>
-                        <FormInput onChangeText={(text) => this.setState({description: text.toLowerCase()})}/>
-                        <FormLabel>Color</FormLabel>
+                        <FormLabel><Icon name="user-circle" size={20}
+                                         color='orange'/>  Name</FormLabel>
+                        <FormInput onChangeText={(text) => {
+                            this.setState({name: text.toLowerCase()});
+                            this.checkComplete();}}/>
+                        <FormLabel><Icon name="pencil" size={20}
+                                         color='orange'/>  Description</FormLabel>
+                        <FormInput onChangeText={(text) => {
+                            this.setState({description: text.toLowerCase()});
+                            this.checkComplete();}}/>
+                        <FormLabel><Icon name="adjust" size={20}
+                                         color='orange'/>  Color</FormLabel>
                         <Picker
-                            selectedValue={this.state.shape}
+                            selectedValue={this.state.uColor}
                             onValueChange={(itemValue, itemIndex) => this.setState({uColor: itemValue.toLowerCase()})}
+                            style={styles.pickers}
+                            prompt="Color"
+                            itemStyle={styles.picker_items}
                             // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                         >
                             <Picker.Item label="red" value="red" />
@@ -174,6 +203,9 @@ export default class settingUpPage extends React.Component {
                         <Picker
                             selectedValue={this.state.shape}
                             onValueChange={(itemValue, itemIndex) => this.setState({shape: itemValue.toLowerCase()})}
+                            prompt="Shape of icon"
+                            style={styles.pickers}
+                            itemStyle={styles.picker_items}
                             // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                         >
                             <Picker.Item label="smily face" value="mood" />
@@ -186,14 +218,13 @@ export default class settingUpPage extends React.Component {
                         {/*onChangeText={(text) => this.setState({shape: text.toLowerCase()})}*/}
                     {/*/>*/}
 
-                    <Divider style={{backgroundColor: 'blue'}}/>
                     {map_form}
                     <View>
-                        <Button buttonStyle={styles.button} backgroundColor='orange' title="Submit" onPress={() => this.handleSubmit()}/>
+                        <Button  backgroundColor={buttonC} title="Submit" onPress={() => this.handleSubmit()} disabled={!complete} />
                     </View>
-
+                    </ScrollView>
                 </Card>
-            </View>
+            </View >
         );
     }
 }
@@ -205,45 +236,26 @@ const styles = StyleSheet.create({
         alignContent:'center'
     },
 
-    logoContainer:{
-        alignContent:'center',
-        alignItems:'center',
-        marginTop: 30
-    },
-
     titleText:{
         fontWeight: 'bold',
         fontSize: 30,
         textAlign:'center'
     },
 
-    logo:{
-        width: 200,
-        height: 200,
-        alignContent: 'center'
-    },
-
     card:{
-        width: 350,
+        width: 340,
         padding: 20,
-        marginTop: 30,
+        marginTop: 50,
         borderRadius: 10
     },
-
-    label:{
-        color:'grey',
-
-    },
-    or: {
-        fontWeight: 'bold',
-        fontSize: 15,
-        textAlign:'center'
-    },
-    button: {
-        width: 300,
-        height: 45,
-        borderColor: "transparent",
-        borderWidth: 0,
+    pickers:{
+        borderColor: "orange",
+        borderWidth: 2,
         borderRadius: 5
     },
+
+    picker_items:{
+        fontSize: 15,
+        textAlign: 'center',
+    }
 });
