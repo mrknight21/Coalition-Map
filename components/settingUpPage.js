@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text, ScrollView, View, Picker, StyleSheet} from 'react-native';
 import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput} from 'react-native-elements';
-import {Dropdown} from 'react-native-material-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
@@ -171,7 +170,7 @@ export default class settingUpPage extends React.Component {
 
 
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <Card containerStyle={styles.card} title={"MAP ID: " + this.state.mapcode}
                       titleStyle={styles.titleText}>
                     <ScrollView>
@@ -192,20 +191,22 @@ export default class settingUpPage extends React.Component {
 
                             <FormLabel><Icon name="adjust" size={20}
                                              color='orange'/> Color</FormLabel>
-                            <Dropdown
-                                value={this.state.uColor}
-                                onChangeText={(itemValue, itemIndex) => this.setState({uColor: itemValue.toLowerCase()})}
-                                data={
-                                    [
-                                        {value: 'red'},
-                                        {value: 'blue'},
-                                        {value: 'green'},
-                                        {value: 'yellow'},
-                                        {value: 'grey'},
-                                        {value: 'black'}
-                                    ]
-                                }
-                            />
+                            <Picker
+                                selectedValue={this.state.uColor}
+                                onValueChange={(itemValue, itemIndex) => this.setState({uColor: itemValue.toLowerCase()})}
+                                style={styles.pickers}
+                                prompt="Color"
+                                itemStyle={styles.picker_items}
+                                // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
+                            >
+                                <Picker.Item label="red" value="red" />
+                                <Picker.Item label="blue" value="blue" />
+                                <Picker.Item label="green" value="green" />
+                                <Picker.Item label="yellow" value="yellow" />
+                                <Picker.Item label="grey" value="grey" />
+                                <Picker.Item label="black" value="black" />
+                            </Picker>
+
 
                             <FormLabel>
                                 <Icon2 name="shape" size={20}
@@ -229,7 +230,6 @@ export default class settingUpPage extends React.Component {
                         {/*<FormInput*/}
                         {/*onChangeText={(text) => this.setState({shape: text.toLowerCase()})}*/}
                         {/*/>*/}
-
                         {map_form}
                         <View>
                             <Button backgroundColor={buttonC} title="Submit" onPress={() => this.handleSubmit()}
@@ -237,7 +237,7 @@ export default class settingUpPage extends React.Component {
                         </View>
                     </ScrollView>
                 </Card>
-            </View>
+            </ScrollView>
         );
     }
 }
@@ -246,6 +246,7 @@ export default class settingUpPage extends React.Component {
 const styles = StyleSheet.create({
 
     container: {
+        flex: 1,
         alignContent: 'center'
     },
 

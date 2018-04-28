@@ -137,7 +137,7 @@ class mapPage extends React.Component {
             <View style={{flex: 1, alignItems: 'stretch'}}>
                 <MapView
                     style={{
-                        flex: 7,
+                        flex: 8,
                     }}
 
                     initialRegion={{
@@ -203,14 +203,14 @@ class mapPage extends React.Component {
                     style={{
                         flex:1,
                         flexDirection: 'row',
-                        backgroundColor: 'grey',
+                        backgroundColor: 'light green',
                         alignItems: 'center',
                         justifyContent: 'center'
                 }}>
 
 
                     <Icon
-                        size={100}
+                        size={50}
                         style={{
                             flex: 1,
                             justifyContent: 'space-between',
@@ -220,7 +220,7 @@ class mapPage extends React.Component {
                         raised={true}
                     />
                     <Icon
-                        size={100}
+                        size={50}
                         style={{
                             flex: 1,
                             justifyContent: 'space-between',
