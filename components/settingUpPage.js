@@ -128,7 +128,6 @@ export default class settingUpPage extends React.Component {
                         <FormInput onChangeText={(text) => this.setState({uColor: text.toLowerCase()})}/>
                         <FormLabel>Shape</FormLabel>
                     </View>
-                    <View style={{flex: 1}}>
                     <Picker
                             selectedValue={this.state.shape}
                             style={{ height: 50, width: 100 }}
@@ -139,7 +138,6 @@ export default class settingUpPage extends React.Component {
                             <Picker.Item label="heart" value="favorite" />
                             <Picker.Item label="star" value="grade" />
                         </Picker>
-                    </View>
 
                     {/*<FormInput*/}
                         {/*onChangeText={(text) => this.setState({shape: text.toLowerCase()})}*/}

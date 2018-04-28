@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, AnimatedRegion, Animated} from 'react-native-maps';
 
 import firebase from './firebase/firebase';
 
@@ -24,7 +24,17 @@ class mapPage extends React.Component {
         super(props);
         this.state = {
             participants: [],
-            landmarks: []
+            landmarks: [],
+            region: new AnimatedRegion({
+                latitude: -36.856,
+                longitude: 174.765644,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01
+            }),
+            addMarker: {
+                latitude: -36.8561968,
+                longitude: 174.7624813,
+            }
         };
         this.mapcode = this.props.navigation.state.params.mapcode;
         this.uid = this.props.navigation.state.params.uid;
@@ -58,7 +68,7 @@ class mapPage extends React.Component {
                     const participants = [];
                     snapshot.forEach((childSnapshot) => {
                         participants.push({
-                            id: childSnapshot.key,
+                            idKey: childSnapshot.key,
                             nameX: childSnapshot.child("name").val().toString(),
                             description: childSnapshot.child('description').val().toString(),
                             lat: childSnapshot.child('lat').val().toString(),
@@ -125,16 +135,13 @@ class mapPage extends React.Component {
     //--------------------------- rendering method ---------------------------
     render() {
         return (
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 1, alignItems: 'stretch'}}>
                 <MapView
                     style={{
-                        left:0,
-                        right:0,
-                        top:0,
-                        bottom:0,
-                        position: 'absolute'
+                        flex: 4,
                     }}
-                    region={{
+                    
+                    initialRegion={{
                         latitude: -36.856,
                         longitude: 174.765644,
                         latitudeDelta: 0.01,
@@ -144,6 +151,7 @@ class mapPage extends React.Component {
 
                     {this.state.participants.map((person) => (
                     <Marker
+                        key={person.idKey}
                         title={person.description}
                         description={person.nameX}
                         coordinate={{
@@ -164,6 +172,7 @@ class mapPage extends React.Component {
 
                     {this.state.landmarks.map((mark) => (
                         <Marker
+                            key={mark.idKey}
                             title={mark.description}
                             description={mark.nameX}
                             coordinate={{
@@ -178,7 +187,51 @@ class mapPage extends React.Component {
                         </Marker>
                     ))}
 
+                    <Marker draggable
+                            coordinate={this.state.addMarker}
+                            onDragEnd={(e) => this.setState({ addMarker: e.nativeEvent.coordinate })}
+                    >
+                        <Icon
+                            name="beenhere"
+                            color="pink"
+                        />
+                    </Marker>
+
+
                 </MapView>
+                <View
+                    style={{
+                        flex:1,
+                        flexDirection: 'row',
+                        backgroundColor: 'grey',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                }}>
+                    <Icon
+                        style={{
+                            flex: 1,
+                            justifyContent: 'space-between',
+                            // alignItems: 'flex-end',
+                            // backgroundColor: 'grey',
+                        }}
+                        name="add"
+                        // color="green"
+                        raised={true}
+                        // reverse={true}
+                        // reverseColor='white'
+                    />
+                    <Icon
+                        style={{
+                            flex: 1,
+                            // position: "absolute", bottom: 0, right: 0,
+                            justifyContent: 'space-between',
+                            // alignItems: 'flex-end',
+                            // backgroundColor: 'grey',
+                        }}
+                        name="message"
+                        raised={true}
+                    />
+                </View>
             </View>
         );
     }
