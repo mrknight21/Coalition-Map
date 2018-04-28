@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {Card, Icon} from 'react-native-elements';
-import MapView, {Marker, AnimatedRegion, Animated} from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 
 import firebase from './firebase/firebase';
 
@@ -132,7 +132,7 @@ class mapPage extends React.Component {
             <View style={{flex: 1, alignItems: 'stretch'}}>
                 <MapView
                     style={{
-                        flex: 4,
+                        flex: 6,
                     }}
 
                     initialRegion={{

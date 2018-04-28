@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, ScrollView, View, Picker, StyleSheet} from 'react-native';
 import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput } from 'react-native-elements';
+import {Dropdown} from 'react-native-material-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from './firebase/firebase';
 
@@ -136,6 +137,12 @@ export default class settingUpPage extends React.Component {
             return (
                 <View>
                     <FormLabel>Map Color</FormLabel>
+
+                    <Dropdown
+                        label={""}
+                    />
+
+
                     <Picker
                         selectedValue={this.state.mapColor}
                         onValueChange={(itemValue, itemIndex) => this.setState({mapColor: itemValue.toLowerCase()})}
@@ -185,6 +192,7 @@ export default class settingUpPage extends React.Component {
                         <FormLabel><Icon name="adjust" size={20}
                                          color='orange'/>  Color</FormLabel>
                         <Picker
+                            mode={"dropdown"}
                             selectedValue={this.state.uColor}
                             onValueChange={(itemValue, itemIndex) => this.setState({uColor: itemValue.toLowerCase()})}
                             style={styles.pickers}
