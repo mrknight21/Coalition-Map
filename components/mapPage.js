@@ -25,12 +25,6 @@ class mapPage extends React.Component {
         this.state = {
             participants: [],
             landmarks: [],
-            region: new AnimatedRegion({
-                latitude: -36.856,
-                longitude: 174.765644,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01
-            }),
             addMarker: {
                 latitude: -36.8561968,
                 longitude: 174.7624813,
@@ -140,7 +134,7 @@ class mapPage extends React.Component {
                     style={{
                         flex: 4,
                     }}
-                    
+
                     initialRegion={{
                         latitude: -36.856,
                         longitude: 174.765644,
