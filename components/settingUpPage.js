@@ -22,7 +22,7 @@ export default class settingUpPage extends React.Component {
         super(props);
         this.state = {
             mapcode: this.props.navigation.state.params.mapcode,
-            mapColor: 'blue',
+            mapColor: null,
             uid: null,
             uColor: 'blue',
             description: null,
