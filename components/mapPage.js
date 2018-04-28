@@ -125,14 +125,19 @@ class mapPage extends React.Component {
         }
     }
 
+    addNewMarker() {
+
+    }
+
 
     //--------------------------- rendering method ---------------------------
     render() {
+
         return (
             <View style={{flex: 1, alignItems: 'stretch'}}>
                 <MapView
                     style={{
-                        flex: 6,
+                        flex: 7,
                     }}
 
                     initialRegion={{
@@ -193,6 +198,7 @@ class mapPage extends React.Component {
 
 
                 </MapView>
+
                 <View
                     style={{
                         flex:1,
@@ -201,26 +207,22 @@ class mapPage extends React.Component {
                         alignItems: 'center',
                         justifyContent: 'center'
                 }}>
+
+
                     <Icon
                         style={{
                             flex: 1,
                             justifyContent: 'space-between',
-                            // alignItems: 'flex-end',
-                            // backgroundColor: 'grey',
                         }}
+                        onPress={}
                         name="add"
-                        // color="green"
                         raised={true}
-                        // reverse={true}
-                        // reverseColor='white'
                     />
                     <Icon
+                        size={100}
                         style={{
                             flex: 1,
-                            // position: "absolute", bottom: 0, right: 0,
                             justifyContent: 'space-between',
-                            // alignItems: 'flex-end',
-                            // backgroundColor: 'grey',
                         }}
                         name="message"
                         raised={true}
