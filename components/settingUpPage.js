@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text, View, Picker} from 'react-native';
-import {Badge, Button, Card, Divider, FormLabel, FormValidationMessage, FormInput} from 'react-native-elements';
+import {Text, View, Picker, StyleSheet} from 'react-native';
+import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firebase from './firebase/firebase';
 
@@ -22,7 +22,7 @@ export default class settingUpPage extends React.Component {
         super(props);
         this.state = {
             mapcode: this.props.navigation.state.params.mapcode,
-            mapColor: null,
+            mapColor: 'blue',
             uid: null,
             uColor: 'blue',
             description: null,
@@ -53,13 +53,37 @@ export default class settingUpPage extends React.Component {
                 console.log(this.props.navigation.state.params.join);
                 this.setState(() => ({uid: uid}));
                 if (!this.props.navigation.state.params.join) {
-                    this.setState(() => ({mapcode: uid}));
+                    this.randomToken();
                     console.log("new map id set! " + uid);
                 }
             } else {
                 console.log("user sign out");
             }
         });
+    }
+
+
+    randomToken () {
+
+
+        var codes = [];
+        const elements = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
+
+        // while (true) {
+        for (var i = 0; i < 4; i++) {
+            randomElement = elements[(Math.random() * 46)|0];
+            codes[i] = randomElement;
+        }
+
+            // let ref = firebase.database().ref(codes.join("") + "/");
+            // console.log(this.ref);
+            // ref.once("value", (snapshot) => {
+            //     if (snapshot.val() === null) {
+            //         break;
+            //     }
+            // });
+        // }
+        this.setState({mapcode: codes.join("")});
     }
 
 
@@ -99,14 +123,22 @@ export default class settingUpPage extends React.Component {
 
 
     mapform() {
-        if (this.props.navigation.state.params.join) {
-            return (<View><Text>MAP ID: {this.state.mapcode}</Text></View>);
-        } else {
+        if (!this.props.navigation.state.params.join) {
             return (
                 <View>
-                    <Text>MAP ID: {this.state.mapcode} </Text>
                     <FormLabel>Map Color</FormLabel>
-                    <FormInput onChangeText={(text) => this.setState({mapColor: text})}/>
+                    <Picker
+                        selectedValue={this.state.shape}
+                        onValueChange={(itemValue, itemIndex) => this.setState({mapColor: itemValue.toLowerCase()})}
+                        // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
+                    >
+                        <Picker.Item label="red" value="red" />
+                        <Picker.Item label="blue" value="blue" />
+                        <Picker.Item label="green" value="green" />
+                        <Picker.Item label="yellow" value="yellow" />
+                        <Picker.Item label="grey" value="grey" />
+                        <Picker.Item label="black" value="black" />
+                    </Picker>
                 </View>
             )
         }
@@ -116,26 +148,35 @@ export default class settingUpPage extends React.Component {
     render() {
         const map_form = this.mapform();
 
+
         return (
-            <View>
-                <Card>
+            <View style={styles.container}>
+                <Card style={styles.card} title={"MAP ID: "+this.state.mapcode} titleStyle={styles.titleText}>
                     <View>
                         <FormLabel>Name</FormLabel>
                         <FormInput onChangeText={(text) => this.setState({name: text.toLowerCase()})}/>
                         <FormLabel>Description</FormLabel>
                         <FormInput onChangeText={(text) => this.setState({description: text.toLowerCase()})}/>
                         <FormLabel>Color</FormLabel>
-                        <FormInput onChangeText={(text) => this.setState({uColor: text.toLowerCase()})}/>
-                        <FormLabel>Shape</FormLabel>
-                    </View>
-                    <View style={{flex: 1}}>
-                    <Picker
+                        <Picker
                             selectedValue={this.state.shape}
-                            style={{ height: 50, width: 100 }}
+                            onValueChange={(itemValue, itemIndex) => this.setState({uColor: itemValue.toLowerCase()})}
+                            // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
+                        >
+                            <Picker.Item label="red" value="red" />
+                            <Picker.Item label="blue" value="blue" />
+                            <Picker.Item label="green" value="green" />
+                            <Picker.Item label="yellow" value="yellow" />
+                            <Picker.Item label="grey" value="grey" />
+                            <Picker.Item label="black" value="black" />
+                        </Picker>
+                        <FormLabel>Shape</FormLabel>
+                        <Picker
+                            selectedValue={this.state.shape}
                             onValueChange={(itemValue, itemIndex) => this.setState({shape: itemValue.toLowerCase()})}
                             // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                         >
-                            <Picker.Item label="Smily Face" value="mood" />
+                            <Picker.Item label="smily face" value="mood" />
                             <Picker.Item label="heart" value="favorite" />
                             <Picker.Item label="star" value="grade" />
                         </Picker>
@@ -148,7 +189,7 @@ export default class settingUpPage extends React.Component {
                     <Divider style={{backgroundColor: 'blue'}}/>
                     {map_form}
                     <View>
-                        <Button title="Submit" onPress={() => this.handleSubmit()}/>
+                        <Button buttonStyle={styles.button} backgroundColor='orange' title="Submit" onPress={() => this.handleSubmit()}/>
                     </View>
 
                 </Card>
@@ -158,3 +199,51 @@ export default class settingUpPage extends React.Component {
 }
 
 
+const styles = StyleSheet.create({
+
+    container:{
+        alignContent:'center'
+    },
+
+    logoContainer:{
+        alignContent:'center',
+        alignItems:'center',
+        marginTop: 30
+    },
+
+    titleText:{
+        fontWeight: 'bold',
+        fontSize: 30,
+        textAlign:'center'
+    },
+
+    logo:{
+        width: 200,
+        height: 200,
+        alignContent: 'center'
+    },
+
+    card:{
+        width: 350,
+        padding: 20,
+        marginTop: 30,
+        borderRadius: 10
+    },
+
+    label:{
+        color:'grey',
+
+    },
+    or: {
+        fontWeight: 'bold',
+        fontSize: 15,
+        textAlign:'center'
+    },
+    button: {
+        width: 300,
+        height: 45,
+        borderColor: "transparent",
+        borderWidth: 0,
+        borderRadius: 5
+    },
+});
