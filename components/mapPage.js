@@ -210,11 +210,12 @@ class mapPage extends React.Component {
 
 
                     <Icon
+                        size={100}
                         style={{
                             flex: 1,
                             justifyContent: 'space-between',
                         }}
-                        onPress={}
+                        // onPress={}
                         name="add"
                         raised={true}
                     />
