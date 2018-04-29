@@ -1,6 +1,6 @@
 import React from 'react';
-import {Text, ScrollView, View, Picker, StyleSheet} from 'react-native';
-import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput} from 'react-native-elements';
+import {Text, ScrollView, View, Picker, StyleSheet,Slider} from 'react-native';
+import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput, CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
@@ -29,8 +29,12 @@ export default class settingUpPage extends React.Component {
             description: "",
             name: "",
             shape: 'face',
-            complete: false
-        }
+            complete: false,
+            botsOn: false,
+            botsNum:0,
+            botsMode:"random",
+            botsColor:"green"
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -93,6 +97,14 @@ export default class settingUpPage extends React.Component {
         var lat = null;
         var lng = null;
 
+        switch (this.state.botsColor){
+            case 'green':this.setState({botsMode: 'random'});
+                        break;
+            case 'red':this.setState({botsMode: 'attacking'});
+                        break;
+            case 'orange': this.setState({botsMode:'pet'});
+        }
+
         navigator.geolocation.getCurrentPosition((position) => {
             lat = position.coords.latitude;
             lng = position.coords.longitude;
@@ -115,7 +127,7 @@ export default class settingUpPage extends React.Component {
             if (host) {
                 db.ref(mapcode + '/setting').set(map);
             }
-            this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid});
+            this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid, host:host});
         });
     }
 
@@ -131,7 +143,7 @@ export default class settingUpPage extends React.Component {
     mapform() {
         if (!this.props.navigation.state.params.join) {
             return (
-                <View>
+                <ScrollView>
                     <FormLabel><Icon
                         name='map-o'
                         size={20}
@@ -153,11 +165,74 @@ export default class settingUpPage extends React.Component {
                         <Picker.Item label="grey" value="grey"/>
                         <Picker.Item label="black" value="black"/>
                     </Picker>
-                </View>
+
+                    <FormLabel><Icon
+                        name='android'
+                        size={30}
+                        color='green'
+                    /> Turn on bots?</FormLabel>
+                    <CheckBox
+                        title='Click Here'
+                        checked={this.state.botsOn}
+                        checkedIcon='dot-circle-o'
+                        uncheckedIcon='circle-o'
+                        onPress={() => this.setState({botsOn: !this.state.botsOn})}
+                    />
+
+
+                    <FormLabel><Icon
+                        name='android'
+                        size={30}
+                        color='green'
+                    /> How many bots?</FormLabel>
+                    <Slider
+                        value={this.state.botsNum}
+                        onValueChange={(value) => this.setState({botsNum:value})}
+                        maximumValue={4}
+                        minimumValue={0}
+                        step={1}
+                    />
+                    <Text>Number: {this.state.botsNum}</Text>
+
+                    <FormLabel><Icon2
+                        name='robot'
+                        size={30}
+                        color='orange'
+                    /> Mode</FormLabel>
+                    <Picker
+                        selectedValue={this.state.mapColor}
+                        onValueChange={(itemValue, itemIndex) => this.setState({botsMode: itemValue.toLowerCase(), botsColor:itemValue.toLowerCase()})}
+                        prompt="Robot Mode"
+                        style={styles.pickers}
+                        itemStyle={styles.picker_items}
+                        // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
+                    >
+                        <Picker.Item label="Random friendly" value="green"/>
+                        <Picker.Item label="Rage attacking" value="red"/>
+                        <Picker.Item label="Cute pet" value="orange"/>
+                    </Picker>
+
+
+
+                    {/*<Picker*/}
+                        {/*selectedValue={this.state.botsColor}*/}
+                        {/*onValueChange={(itemValue, itemIndex) => this.setState({mapColor: itemValue.toLowerCase()})}*/}
+                        {/*prompt="Map Color"*/}
+                        {/*style={styles.pickers}*/}
+                        {/*itemStyle={styles.picker_items}*/}
+                        {/*// onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}*/}
+                    {/*>*/}
+                        {/*<Picker.Item label="red" value="red"/>*/}
+                        {/*<Picker.Item label="blue" value="blue"/>*/}
+                        {/*<Picker.Item label="green" value="green"/>*/}
+                        {/*<Picker.Item label="yellow" value="yellow"/>*/}
+                        {/*<Picker.Item label="grey" value="grey"/>*/}
+                        {/*<Picker.Item label="black" value="black"/>*/}
+                    {/*</Picker>*/}
+                </ScrollView>
             )
         }
     }
-
 
     render() {
         const map_form = this.mapform();
