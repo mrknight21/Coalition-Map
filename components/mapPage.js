@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import {Card, ButtonGroup, Icon} from 'react-native-elements';
+import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInput} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
@@ -31,7 +31,10 @@ class mapPage extends React.Component {
             addMarker: {
                 latitude: -36.8561968,
                 longitude: 174.7624813,
-            }
+            },
+            addMarkerDescription: "default",
+            addMarkerCardVisibility: true
+
         };
         this.mapcode = this.props.navigation.state.params.mapcode;
         this.uid = this.props.navigation.state.params.uid;
@@ -44,7 +47,7 @@ class mapPage extends React.Component {
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
-            this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 10000);
+            this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 1000);
             this.props.navigation.setParams({ clear: ()=>{clearInterval(this.interval)} });
 
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
@@ -129,6 +132,18 @@ class mapPage extends React.Component {
         }
     }
 
+    exitAddMarker() {
+        this.setState({
+            addMarkerCardVisibility: false
+        })
+    }
+
+    openAddMarkerCard(){
+        this.setState({
+            addMarkerCardVisibility: true
+        })
+    }
+
     addNewMarker() {
 
     }
@@ -138,32 +153,66 @@ class mapPage extends React.Component {
     render() {
 
         const addMarkerIcon = () => <Icon
-                size={20}
-                style={{
-                    flex: 1,
-                    justifyContent: 'space-between',
-                }}
-                // onPress={}
-                name="add"
-                raised={true}
-            />
-            const messagingIcon = () => <Icon
-                    size={20}
-                    style={{
-                        flex: 1,
-                        justifyContent: 'space-between',
-                    }}
-                    name="message"
-                    raised={true}
-                />
+            size={20}
+            style={{
+                flex: 1,
+                justifyContent: 'space-between',
+            }}
+            onPress={() => this.openAddMarkerCard()}
+            name="add"
+            // raised={true}
+        />
+        const messagingIcon = () => <Icon
+            size={20}
+            style={{
+                flex: 1,
+                justifyContent: 'space-between',
+            }}
+            name="message"
+            // raised={true}
+        />
 
         const buttons = [
             {element: addMarkerIcon},
             {element: messagingIcon}
-        ]
+        ];
+
+
+        //only show add marker option if button pressed.
+        let addMarkerCard = null;
+
+        if (this.state.addMarkerCardVisibility) {
+            addMarkerCard = (
+                <Card
+                    title='Add a marker'
+                >
+                    <Text style={{marginBottom: 10}}>
+                        Pick your choice and add!
+                    </Text>
+                    <FormLabel>
+                        Add description to marker
+                    </FormLabel>
+                    <FormInput/>
+                    <Button
+                        onPress={() => this.exitAddMarker()}
+                        buttonStyle={{position: "relative", width: 50, height: 50}}
+                        icon={{name: 'clear'}}
+                    />
+                    <Button
+                        icon={{name: 'code'}}
+                        backgroundColor='#03A9F4'
+                        buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                        title='ADD'
+                    />
+                </Card>
+            )
+        }
 
         return (
             <View style={{flex: 1, alignItems: 'stretch'}}>
+
+                {/*Card for displaying marker addition*/}
+
                 <MapView
                     style={{
                         flex: 8,
@@ -178,24 +227,24 @@ class mapPage extends React.Component {
                 >
 
                     {this.state.participants.map((person) => (
-                    <Marker
-                        key={person.idKey}
-                        title={person.description}
-                        description={person.nameX}
-                        coordinate={{
-                            latitude: parseFloat(person.lat),
-                            longitude: parseFloat(person.lng),
-                        }}
-                    >
-                        <Icon
-                            name={person.shapeX}
-                            color={person.colorX}
-                            raised={true}
-                            reverse={true}
-                            reverseColor='white'
-                        />
-                    </Marker>
-                ))}
+                        <Marker
+                            key={person.idKey}
+                            title={person.description}
+                            description={person.nameX}
+                            coordinate={{
+                                latitude: parseFloat(person.lat),
+                                longitude: parseFloat(person.lng),
+                            }}
+                        >
+                            <Icon
+                                name={person.shapeX}
+                                color={person.colorX}
+                                raised={true}
+                                reverse={true}
+                                reverseColor='white'
+                            />
+                        </Marker>
+                    ))}
 
 
                     {this.state.landmarks.map((mark) => (
@@ -225,23 +274,22 @@ class mapPage extends React.Component {
                         />
                     </Marker>
 
-
                 </MapView>
 
-                {/*<View*/}
-                    {/*style={{*/}
-                        {/*flex:1,*/}
-                        {/*flexDirection: 'row',*/}
-                        {/*backgroundColor: '#f4511e',*/}
-                        {/*alignItems: 'center',*/}
-                        {/*justifyContent: 'center'*/}
-                {/*}}>*/}
+                <View
+                    style={{
+                        position:"absolute",
+                        backgroundColor: "transparent",
+                        width: 300
+                    }}
+                >
+                    {addMarkerCard}
+                </View>
 
-                    <ButtonGroup
-                        buttons={buttons}
-                        containerStyle={{height:100, flex: 1}}
-                    />
-                {/*</View>*/}
+                <ButtonGroup
+                    buttons={buttons}
+                    containerStyle={{height: 100, flex: 1}}
+                />
             </View>
         );
     }
