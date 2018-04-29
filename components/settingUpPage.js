@@ -70,7 +70,7 @@ export default class settingUpPage extends React.Component {
         const elements = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         // while (true) {
         for (var i = 0; i < 4; i++) {
-            randomElement = elements[(Math.random() * 46) | 0];
+            let randomElement = elements[(Math.random() * 46) | 0];
             codes[i] = randomElement;
         }
         // let ref = firebase.database().ref(codes.join("") + "/");
