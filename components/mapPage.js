@@ -9,8 +9,8 @@ class mapPage extends React.Component {
 
 
 
-    static navigationOptions = {
-        title: 'Map: '+this.mapcode,
+    static navigationOptions = ({navigation})=>({
+        title: 'Map: '+navigation.state.params.mapcode,
         headerStyle: {
             backgroundColor: '#397cf4',
         },
@@ -18,7 +18,7 @@ class mapPage extends React.Component {
         headerTitleStyle: {
             fontWeight: 'bold',
         },
-    };
+    });
 
     constructor(props) {
         super(props);
