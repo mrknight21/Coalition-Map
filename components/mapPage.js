@@ -1,8 +1,8 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import {Card, Icon, ButtonGroup} from 'react-native-elements';
+import {Card, ButtonGroup, Icon} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
-
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
 
 class mapPage extends React.Component {
@@ -12,12 +12,15 @@ class mapPage extends React.Component {
     static navigationOptions = ({navigation})=>({
         title: 'Map: '+navigation.state.params.mapcode,
         headerStyle: {
-            backgroundColor: '#397cf4',
+            backgroundColor: '#f4511e',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
             fontWeight: 'bold',
         },
+        headerRight:navigation.state.params.host ? <Icon2 reverse name="delete" size={30} color='white' onPress={()=>{navigation.state.params.clear();
+        firebase.database().ref(navigation.state.params.mapcode).remove();
+        navigation.navigate('signIn');}}/>: null
     });
 
     constructor(props) {
@@ -42,6 +45,7 @@ class mapPage extends React.Component {
             seconds and then firing the showPosition method() */
 
             this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 10000);
+            this.props.navigation.setParams({ clear: ()=>{clearInterval(this.interval)} });
 
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
 
