@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import {Card, Icon, ButtonGroup} from 'react-native-elements';
+import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInput} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 
 import firebase from './firebase/firebase';
@@ -8,9 +8,8 @@ import firebase from './firebase/firebase';
 class mapPage extends React.Component {
 
 
-
     static navigationOptions = {
-        title: 'Map: '+this.mapcode,
+        title: 'Map: ' + this.mapcode,
         headerStyle: {
             backgroundColor: '#397cf4',
         },
@@ -28,7 +27,10 @@ class mapPage extends React.Component {
             addMarker: {
                 latitude: -36.8561968,
                 longitude: 174.7624813,
-            }
+            },
+            addMarkerDescription: "default",
+            addMarkerCardVisibility: true
+
         };
         this.mapcode = this.props.navigation.state.params.mapcode;
         this.uid = this.props.navigation.state.params.uid;
@@ -41,14 +43,16 @@ class mapPage extends React.Component {
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
-            this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 10000);
+            this.interval = setInterval(() => {
+                navigator.geolocation.getCurrentPosition(showPosition)
+            }, 1000);
 
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
 
             const showPosition = (position) => {
                 console.log("getCurrentPosition working!");
-                console.log("Latitude: "+ position.coords.latitude + ", Longitude: " + position.coords.longitude);
-                firebase.database().ref(this.mapcode+'/users/'+this.uid).update({
+                console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+                firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
@@ -57,7 +61,7 @@ class mapPage extends React.Component {
 
             // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
 
-            firebase.database().ref(this.mapcode+'/users')
+            firebase.database().ref(this.mapcode + '/users')
                 .on('value', (snapshot) => {
                     const participants = [];
                     snapshot.forEach((childSnapshot) => {
@@ -75,15 +79,15 @@ class mapPage extends React.Component {
                     })
                     console.log('parti2:');
                     console.log(participants);
-                    this.setState(() => ({ participants: participants }));
+                    this.setState(() => ({participants: participants}));
                 }, (error) => {
                     console.log("Error", error);
                 });
 
 
-        //    Second DB query to request landmark information and store to landmarks array in state
+            //    Second DB query to request landmark information and store to landmarks array in state
 
-            firebase.database().ref(this.mapcode+'/landmarks')
+            firebase.database().ref(this.mapcode + '/landmarks')
                 .on('value', (snapshot) => {
                     const landmarks = [];
                     snapshot.forEach((childSnapshot) => {
@@ -101,7 +105,7 @@ class mapPage extends React.Component {
                     })
                     console.log('parti2:');
                     console.log(landmarks);
-                    this.setState(() => ({ landmarks: landmarks }));
+                    this.setState(() => ({landmarks: landmarks}));
                 }, (error) => {
                     console.log("Error", error);
                 });
@@ -118,11 +122,23 @@ class mapPage extends React.Component {
 
             clearInterval(this.interval);
 
-            firebase.database().ref(this.mapcode+'/users/'+this.uid).remove();
+            firebase.database().ref(this.mapcode + '/users/' + this.uid).remove();
 
         } catch (e) {
             console.log("error", e);
         }
+    }
+
+    exitAddMarker() {
+        this.setState({
+            addMarkerCardVisibility: false
+        })
+    }
+
+    openAddMarkerCard(){
+        this.setState({
+            addMarkerCardVisibility: true
+        })
     }
 
     addNewMarker() {
@@ -134,32 +150,66 @@ class mapPage extends React.Component {
     render() {
 
         const addMarkerIcon = () => <Icon
-                size={20}
-                style={{
-                    flex: 1,
-                    justifyContent: 'space-between',
-                }}
-                // onPress={}
-                name="add"
-                raised={true}
-            />
-            const messagingIcon = () => <Icon
-                    size={20}
-                    style={{
-                        flex: 1,
-                        justifyContent: 'space-between',
-                    }}
-                    name="message"
-                    raised={true}
-                />
+            size={20}
+            style={{
+                flex: 1,
+                justifyContent: 'space-between',
+            }}
+            onPress={() => this.openAddMarkerCard()}
+            name="add"
+            // raised={true}
+        />
+        const messagingIcon = () => <Icon
+            size={20}
+            style={{
+                flex: 1,
+                justifyContent: 'space-between',
+            }}
+            name="message"
+            // raised={true}
+        />
 
         const buttons = [
             {element: addMarkerIcon},
             {element: messagingIcon}
-        ]
+        ];
+
+
+        //only show add marker option if button pressed.
+        let addMarkerCard = null;
+
+        if (this.state.addMarkerCardVisibility) {
+            addMarkerCard = (
+                <Card
+                    title='Add a marker'
+                >
+                    <Text style={{marginBottom: 10}}>
+                        Pick your choice and add!
+                    </Text>
+                    <FormLabel>
+                        Add description to marker
+                    </FormLabel>
+                    <FormInput/>
+                    <Button
+                        onPress={() => this.exitAddMarker()}
+                        buttonStyle={{position: "relative", width: 50, height: 50}}
+                        icon={{name: 'clear'}}
+                    />
+                    <Button
+                        icon={{name: 'code'}}
+                        backgroundColor='#03A9F4'
+                        buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                        title='ADD'
+                    />
+                </Card>
+            )
+        }
 
         return (
             <View style={{flex: 1, alignItems: 'stretch'}}>
+
+                {/*Card for displaying marker addition*/}
+
                 <MapView
                     style={{
                         flex: 8,
@@ -174,24 +224,24 @@ class mapPage extends React.Component {
                 >
 
                     {this.state.participants.map((person) => (
-                    <Marker
-                        key={person.idKey}
-                        title={person.description}
-                        description={person.nameX}
-                        coordinate={{
-                            latitude: parseFloat(person.lat),
-                            longitude: parseFloat(person.lng),
-                        }}
-                    >
-                        <Icon
-                            name={person.shapeX}
-                            color={person.colorX}
-                            raised={true}
-                            reverse={true}
-                            reverseColor='white'
-                        />
-                    </Marker>
-                ))}
+                        <Marker
+                            key={person.idKey}
+                            title={person.description}
+                            description={person.nameX}
+                            coordinate={{
+                                latitude: parseFloat(person.lat),
+                                longitude: parseFloat(person.lng),
+                            }}
+                        >
+                            <Icon
+                                name={person.shapeX}
+                                color={person.colorX}
+                                raised={true}
+                                reverse={true}
+                                reverseColor='white'
+                            />
+                        </Marker>
+                    ))}
 
 
                     {this.state.landmarks.map((mark) => (
@@ -213,7 +263,7 @@ class mapPage extends React.Component {
 
                     <Marker draggable
                             coordinate={this.state.addMarker}
-                            onDragEnd={(e) => this.setState({ addMarker: e.nativeEvent.coordinate })}
+                            onDragEnd={(e) => this.setState({addMarker: e.nativeEvent.coordinate})}
                     >
                         <Icon
                             name="beenhere"
@@ -221,23 +271,22 @@ class mapPage extends React.Component {
                         />
                     </Marker>
 
-
                 </MapView>
 
-                {/*<View*/}
-                    {/*style={{*/}
-                        {/*flex:1,*/}
-                        {/*flexDirection: 'row',*/}
-                        {/*backgroundColor: '#f4511e',*/}
-                        {/*alignItems: 'center',*/}
-                        {/*justifyContent: 'center'*/}
-                {/*}}>*/}
+                <View
+                    style={{
+                        position:"absolute",
+                        backgroundColor: "transparent",
+                        width: 300
+                    }}
+                >
+                    {addMarkerCard}
+                </View>
 
-                    <ButtonGroup
-                        buttons={buttons}
-                        containerStyle={{height:100, flex: 1}}
-                    />
-                {/*</View>*/}
+                <ButtonGroup
+                    buttons={buttons}
+                    containerStyle={{height: 100, flex: 1}}
+                />
             </View>
         );
     }
