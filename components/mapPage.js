@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import {Card, Icon} from 'react-native-elements';
+import {Card, Icon, ButtonGroup} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 
 import firebase from './firebase/firebase';
@@ -38,10 +38,10 @@ class mapPage extends React.Component {
     componentDidMount() {
 
         try {
-            /* Using getCurrentPosition method on the geolocation to get the current location of user device every 5
+            /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
-            this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 5000);
+            this.interval = setInterval(() => { navigator.geolocation.getCurrentPosition(showPosition) }, 10000);
 
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
 
@@ -133,6 +133,31 @@ class mapPage extends React.Component {
     //--------------------------- rendering method ---------------------------
     render() {
 
+        const addMarkerIcon = () => <Icon
+                size={20}
+                style={{
+                    flex: 1,
+                    justifyContent: 'space-between',
+                }}
+                // onPress={}
+                name="add"
+                raised={true}
+            />
+            const messagingIcon = () => <Icon
+                    size={20}
+                    style={{
+                        flex: 1,
+                        justifyContent: 'space-between',
+                    }}
+                    name="message"
+                    raised={true}
+                />
+
+        const buttons = [
+            {element: addMarkerIcon},
+            {element: messagingIcon}
+        ]
+
         return (
             <View style={{flex: 1, alignItems: 'stretch'}}>
                 <MapView
@@ -199,36 +224,20 @@ class mapPage extends React.Component {
 
                 </MapView>
 
-                <View
-                    style={{
-                        flex:1,
-                        flexDirection: 'row',
-                        backgroundColor: 'light green',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                }}>
+                {/*<View*/}
+                    {/*style={{*/}
+                        {/*flex:1,*/}
+                        {/*flexDirection: 'row',*/}
+                        {/*backgroundColor: '#f4511e',*/}
+                        {/*alignItems: 'center',*/}
+                        {/*justifyContent: 'center'*/}
+                {/*}}>*/}
 
-
-                    <Icon
-                        size={50}
-                        style={{
-                            flex: 1,
-                            justifyContent: 'space-between',
-                        }}
-                        // onPress={}
-                        name="add"
-                        raised={true}
+                    <ButtonGroup
+                        buttons={buttons}
+                        containerStyle={{height:100, flex: 1}}
                     />
-                    <Icon
-                        size={50}
-                        style={{
-                            flex: 1,
-                            justifyContent: 'space-between',
-                        }}
-                        name="message"
-                        raised={true}
-                    />
-                </View>
+                {/*</View>*/}
             </View>
         );
     }
