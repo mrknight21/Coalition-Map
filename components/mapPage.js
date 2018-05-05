@@ -4,6 +4,9 @@ import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInp
 import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
+import Android_bot from './Android_bot';
+
+
 
 class mapPage extends React.Component {
 
@@ -51,6 +54,7 @@ class mapPage extends React.Component {
         };
         this.mapcode = this.props.navigation.state.params.mapcode;
         this.uid = this.props.navigation.state.params.uid;
+        this.host = this.props.navigation.state.params.host;
     }
 
     // // ---------------- Component lifecycle methods -----------------------------
@@ -60,10 +64,46 @@ class mapPage extends React.Component {
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
+
             if(this.state.mounted) {
-                this.interval = setInterval(() => {
-                    navigator.geolocation.getCurrentPosition(showPosition)
-                }, 1000);
+                this.interval = setInterval(() =>{
+
+
+
+
+                    if(this.host && this.state.participants.length>0 && this.state.bots.length >0) {
+                        this.state.bots.map((bot) => {
+
+                            let distances = this.state.participants.map((x) => (Math.abs(x.lat-bot.lat)+Math.abs(x.lng-bot.lng)));
+                            console.log(distances);
+                            const idx=distances.indexOf(Math.min.apply(null,distances));
+                            console.log(idx);
+                            let closest_user = this.state.participants[idx];
+                            console.log(closest_user);
+
+                            const radius = 0.0003;
+
+
+                            let new_coor = {lat:0, lng:0};
+                            if ((bot.lat-closest_user.lat) > 0){
+                                new_coor.lat = bot.lat-radius;
+                            }else {
+                                new_coor.lat = bot.lat+radius;
+                            }
+                            if((bot.lng-closest_user.lng) > 0){
+                                new_coor.lng = bot.lng-radius;
+                            }else{
+                                new_coor.lng = bot.lng+radius;
+                            }
+
+                            //let coor = this.android_move(bot, closest_user);
+                            bot.lat = new_coor.lat;
+                            bot.lng = new_coor.lng;
+                            firebase.database().ref(this.mapcode + "/bots/" + bot.id).set(bot);
+                        });
+                    }
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                    }, 1000);
             }
 
             this.props.navigation.setParams({
@@ -72,18 +112,20 @@ class mapPage extends React.Component {
                 }
             });
 
+
+            
+
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
 
             const showPosition = (position) => {
-                console.log("getCurrentPosition working!");
-                console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+
 
                 this.setState(() => ({
                     currentCoordinates: {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     }
-                }))
+                }));
 
                 firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
                     lat: position.coords.latitude,
@@ -110,11 +152,10 @@ class mapPage extends React.Component {
                             // ...childSnapshot.val()
                         });
                     })
-                    console.log('parti2:');
-                    console.log(participants);
+
                     this.setState(() => ({participants: participants}));
                 }, (error) => {
-                    console.log("Error", error);
+                   console.log("Error", error);
                 });
 
 
@@ -136,8 +177,6 @@ class mapPage extends React.Component {
                             // ...childSnapshot.val()
                         });
                     })
-                    console.log('parti2:');
-                    console.log(landmarks);
                     this.setState(() => ({landmarks: landmarks}));
                 }, (error) => {
                     console.log("Error", error);
@@ -155,11 +194,12 @@ class mapPage extends React.Component {
                             color: childSnapshot.child('color').val().toString(),
                         });
                     });
-                    console.log(bots);
+
                     this.setState(() => ({bots: bots}));
                 }, (error) => {
-                    console.log("Error", error);
+                   console.log("Error", error);
                 });
+
 
         } catch (e) {
             console.log("error", e);
@@ -171,7 +211,7 @@ class mapPage extends React.Component {
     componentWillUnmount() {
         try {
 
-            this.setState(() => ({ mounted: false }))
+            this.setState(() => ({ mounted: false }));
 
             clearInterval(this.interval);
 
@@ -236,6 +276,47 @@ class mapPage extends React.Component {
         this.setState(prevState => ({}))
     }
 
+    ///////////////////////////////////////Robot logic//////////////////////////////////////////
+
+
+    // android_search_closest(bot, users) {
+    //
+    //     console.log("line 259: "+users);
+    //     let distances = users.map((x) => (Math.abs(x.lat-bot.lat)+Math.abs(x.lng-bot.lng)));
+    //     console.log(distances);
+    //     const idx=distances.indexOf(Math.min.apply(null,distances));
+    //     console.log(idx);
+    //     let closest_user = {lat:users[idx].lat, lng:users[idx].lng};
+    //     console.log(closest_user);
+    //     return closest_user;
+    // }
+    //
+    //
+    // android_move(bot, user) {
+    //    const radius = 0.0003;
+    //
+    //     console.log(user);
+    //
+    //     let new_coor = {lat:0, lng:0};
+    //     if ((bot.lat-user.lat) > 0){
+    //         new_coor.lat = bot.lat-radius;
+    //     }else {
+    //         new_coor.lat = bot.lat+radius;
+    //     }
+    //     if((bot.lng-user.lng) > 0){
+    //         new_coor.lng = bot.lng-radius;
+    //     }else{
+    //         new_coor.lng = bot.lng+radius;
+    //     }
+    //     return new_coor;
+    // }
+
+
+
+
+
+
+    ///////////////////////////////////////Robot logic//////////////////////////////////////////
 
     //--------------------------- rendering method ---------------------------
     render() {
@@ -369,21 +450,16 @@ class mapPage extends React.Component {
                     ))}
 
                     {this.state.bots.map((bot) => (
-                        <Marker
+                        <Android_bot
                             key={bot.id}
-                            title={bot.id}
-                            coordinate={{
-                                latitude: parseFloat(bot.lat),
-                                longitude: parseFloat(bot.lng),
-                            }}
-                        >
-                            <Icon
-                                name='android'
-                                color={bot.color}
-                                raised={true}
-                                reverse={true}
-                            />
-                        </Marker>
+                            id={bot.id}
+                            color="green"
+                            lat={bot.lat}
+                            lng={bot.lng}
+                            host={this.host}
+                            mapcdoe={this.mapcode}
+                            users={this.state.participants}
+                        />
                     ))}
 
 

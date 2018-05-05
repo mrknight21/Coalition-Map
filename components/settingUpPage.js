@@ -51,7 +51,7 @@ export default class settingUpPage extends React.Component {
     android_init(mapcode, number, center_lat, center_lng, color) {
 
 
-        const radius = 0.0003;
+        const radius = 0.003;
 
          let botSquad = {};
          for (let i = 1; i <= number; i++) {
