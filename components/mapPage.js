@@ -373,8 +373,8 @@ class mapPage extends React.Component {
                             key={bot.id}
                             title={bot.id}
                             coordinate={{
-                                latitude: parseFloat(bot.lat).toFixed(7),
-                                longitude: parseFloat(bot.lng).toFixed(7),
+                                latitude: parseFloat(bot.lat),
+                                longitude: parseFloat(bot.lng),
                             }}
                         >
                             <Icon
