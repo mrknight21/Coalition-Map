@@ -1,7 +1,7 @@
 /**
  * Created by Administer on 23/04/2018.
  */
-import firebase from './firebase/firebase';
+//import firebase from './firebase/firebase';
 
 /*
  n sLatitude: 1 deg = 110.574 km
@@ -23,30 +23,40 @@ import firebase from './firebase/firebase';
 
 
  */
-module.export= {
-
-    android_init: function(mapcode, number, center_lat, center_lng, radius = 0.0003, color){
-    const db = firebase.database();
-    const ref = db.ref(mapcode / bots);
-    let botSquad = {};
-    for (let i = 1; i <= number; i++) {
-        let id = "bot" + i;
-
-        let la_random = Math.random();
-        let lo_random = Math.random();
-
-        let bot_lat = la_random > 0.5 ? center_la + radius : center_la - radius;
-        let bot_lng = lo_random > 0.5 ? center_lo + radius : center_lo - radius;
 
 
-        botSquad[id] = {
-            id: id,
-            color: color,
-            lat: bot_lat,
-            lng: bot_lng
-        }
-    }
-    ref.update(botSquad);
+    const bot = {
+
+    android_init: function(mapcode, number, center_lat, center_lng, radius = 0.0003, color) {
+
+        console.log(mapcode);
+        console.log("from random_walker");
+        console.log(number);
+        console.log("lat: " +center_lat);
+        console.log("lng: "+ center_lng);
+
+
+        // const db = firebase.database();
+        // const ref = db.ref(mapcode / bots);
+        // let botSquad = {};
+        // for (let i = 1; i <= number; i++) {
+        //     let id = "bot" + i;
+        //
+        //     let la_random = Math.random();
+        //     let lo_random = Math.random();
+        //
+        //     let bot_lat = la_random > 0.5 ? center_la + radius : center_la - radius;
+        //     let bot_lng = lo_random > 0.5 ? center_lo + radius : center_lo - radius;
+        //
+        //
+        //     botSquad[id] = {
+        //         id: id,
+        //         color: color,
+        //         lat: bot_lat,
+        //         lng: bot_lng
+        //     }
+        // }
+        // ref.update(botSquad);
     }
 
 
@@ -71,11 +81,28 @@ module.export= {
 // }
 };
 
+module.export = bot;
 
-// function search_closest(its_la, its_lo, users) {
-//     closest_user
-// }
-//
+//     botSquad[id] = {
+//         id: id,
+//         color: color,
+//         lat: bot_lat,
+//         lng: bot_lng
+//     }
+
+
+
+function search_closest(bot, users) {
+
+    let closest_user;
+//.map(function(currentValue, index, arr), thisValue)
+    distances = users.map(x => (Math.abs(x.lat-bot.lat)+Math.abs(x.lng-bot.lng)));
+    idx=distances.indexOf(Math.min.apply(null,distances));
+
+    target = users[idx];
+    decision ={tareget: ta};
+}
+
 // function check_attach() {
 //
 // }

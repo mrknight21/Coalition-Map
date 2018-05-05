@@ -4,6 +4,7 @@ import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput, Chec
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
+//import bot from '../script/random_walk';
 
 
 export default class settingUpPage extends React.Component {
@@ -42,6 +43,66 @@ export default class settingUpPage extends React.Component {
     componentDidMount() {
         this.anonymous_login();
     }
+
+    //////////////Bot functions////////////////////////////////////////////////////////////
+
+
+
+    android_init(mapcode, number, center_lat, center_lng, color) {
+
+
+        const radius = 0.0003;
+
+         let botSquad = {};
+         for (let i = 1; i <= number; i++) {
+        let id = "bot" + i;
+        console.log(id);
+
+        let la_random = Math.random();
+        let lo_random = Math.random();
+        console.log(lo_random);
+        console.log(la_random);
+        //
+       let bot_la;
+       let bot_lo;
+
+       if(la_random >0.5){
+           bot_la = parseFloat(center_lat + radius).toFixed(7);
+       }else {
+           bot_la = parseFloat(center_lat - radius).toFixed(7);
+       }
+
+       if(lo_random >0.5){
+           bot_lo = parseFloat(center_lng + radius).toFixed(7);
+       }else{
+           bot_lo = parseFloat(center_lng - radius).toFixed(7);
+       }
+
+
+
+        console.log(id+" lat: "+bot_la);
+        console.log(id+" lng: "+bot_lo);
+
+
+            let bot = {
+                id: id,
+                color: color,
+                lat: bot_la,
+                lng: bot_lo
+            };
+        console.log(bot);
+        botSquad[id]= bot;
+        }
+        console.log("finished!!");
+        return botSquad;
+    }
+
+
+
+
+    //////////////Bot functions////////////////////////////////////////////////////////////
+
+
 
 
     anonymous_login() {
@@ -126,7 +187,16 @@ export default class settingUpPage extends React.Component {
             db.ref(mapcode + '/users/' + uid).update(user);
             if (host) {
                 db.ref(mapcode + '/setting').set(map);
+                console.log("Bots: "+this.state.botsOn);
+                console.log("BotNum: "+this.state.botsNum);
+                if (this.state.botsOn && this.state.botsNum >0){
+                    console.log("reach");
+                    let bots = this.android_init(mapcode, this.state.botsNum, lat, lng, this.state.botsColor);
+                    console.log(bots);
+                    db.ref(mapcode + '/bots').set(bots);
+                }
             }
+
             this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid, host:host});
         });
     }
@@ -200,16 +270,27 @@ export default class settingUpPage extends React.Component {
                         color='orange'
                     /> Mode</FormLabel>
                     <Picker
-                        selectedValue={this.state.mapColor}
-                        onValueChange={(itemValue, itemIndex) => this.setState({botsMode: itemValue.toLowerCase(), botsColor:itemValue.toLowerCase()})}
+                        selectedValue={this.state.botsMode}
+                        onValueChange={(itemValue, itemIndex) =>{
+                            let color = "green";
+                            switch (itemValue){
+                                case "Random friendly": color= "green";
+                                                        break;
+                                case "Rage attacking": color ="red";
+                                                        break;
+                                case "Cute pet": color="orange";
+                                                        break;
+                            }
+                            this.setState({botsMode: itemValue.toLowerCase(), botsColor:color});
+                        }}
                         prompt="Robot Mode"
                         style={styles.pickers}
                         itemStyle={styles.picker_items}
                         // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                     >
-                        <Picker.Item label="Random friendly" value="green"/>
-                        <Picker.Item label="Rage attacking" value="red"/>
-                        <Picker.Item label="Cute pet" value="orange"/>
+                        <Picker.Item label="Random friendly" value="Random friendly"/>
+                        <Picker.Item label="Rage attacking" value="Rage attacking"/>
+                        <Picker.Item label="Cute pet" value="Cute pet"/>
                     </Picker>
 
 
