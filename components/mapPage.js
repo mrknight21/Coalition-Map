@@ -93,52 +93,12 @@ class mapPage extends React.Component {
                     lng: position.coords.longitude
                 });
             };
-
-
+            
             // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
-
-            firebase.database().ref(this.mapcode + '/users')
-                .on('value', (snapshot) => {
-                    const participants = [];
-                    snapshot.forEach((childSnapshot) => {
-                        participants.push({
-                            id: childSnapshot.key,
-                            nameX: childSnapshot.child("name").val().toString(),
-                            description: childSnapshot.child('description').val().toString(),
-                            lat: childSnapshot.child('lat').val().toString(),
-                            lng: childSnapshot.child('lng').val().toString(),
-                            shapeX: childSnapshot.child('shape').val().toString(),
-                            colorX: childSnapshot.child('color').val().toString(),
-                        });
-                    })
-                    this.setState(() => ({participants: participants}));
-                }, (error) => {
-                    console.log("Error", error);
-                });
+            this.firebaseUpdate('users', 'participants');
 
             //    Second DB query to request landmark information and store to landmarks array in state
-
-            firebase.database().ref(this.mapcode + '/landmarks')
-                .on('value', (snapshot) => {
-                    const landmarks = [];
-                    snapshot.forEach((childSnapshot) => {
-                        landmarks.push({
-                            id: childSnapshot.key,
-                            nameX: childSnapshot.child("name").val().toString(),
-                            description: childSnapshot.child('description').val().toString(),
-                            lat: childSnapshot.child('lat').val().toString(),
-                            lng: childSnapshot.child('lng').val().toString(),
-                            shapeX: childSnapshot.child('shape').val().toString(),
-                            colorX: childSnapshot.child('color').val().toString(),
-
-                            // ...childSnapshot.val()
-                        });
-                    })
-                    this.setState(() => ({landmarks: landmarks}));
-                }, (error) => {
-                    console.log("Error", error);
-                });
-
+            this.firebaseUpdate('landmarks', 'landmarks')
 
             firebase.database().ref(this.mapcode + '/bots')
                 .on('value', (snapshot) => {
@@ -227,6 +187,27 @@ class mapPage extends React.Component {
                 longitude: prevState.addMarkerCoordinates.longitude + 0.001
             }
         }))
+    }
+
+    firebaseUpdate = (dbAddress, stateArrayName) => {
+        firebase.database().ref(this.mapcode + '/' + dbAddress)
+            .on('value', (snapshot) => {
+                const tempArray = [];
+                snapshot.forEach((childSnapshot) => {
+                    tempArray.push({
+                        id: childSnapshot.key,
+                        nameX: childSnapshot.child("name").val().toString(),
+                        description: childSnapshot.child('description').val().toString(),
+                        lat: childSnapshot.child('lat').val().toString(),
+                        lng: childSnapshot.child('lng').val().toString(),
+                        shapeX: childSnapshot.child('shape').val().toString(),
+                        colorX: childSnapshot.child('color').val().toString(),
+                    });
+                })
+                this.setState(() => ({[stateArrayName] : tempArray}));
+            }, (error) => {
+                console.log("Error", error);
+            });
     }
 
     //Method to update the location of the addmarker to be right next to the person.
