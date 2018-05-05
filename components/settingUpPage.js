@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, ScrollView, View, Picker, StyleSheet,Slider} from 'react-native';
-import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput, CheckBox} from 'react-native-elements';
+import {Button, Card, FormLabel, FormInput, CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
@@ -108,15 +108,15 @@ export default class settingUpPage extends React.Component {
     anonymous_login() {
         firebase.auth().signInAnonymously().catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            let errorCode = error.code;
+            let errorMessage = error.message;
             // ...
         });
         uid = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in.
-                var isAnonymous = user.isAnonymous;
-                var uid = user.uid;
+                let isAnonymous = user.isAnonymous;
+                let uid = user.uid;
                 console.log(this.props.navigation.state.params.join);
                 this.setState(() => ({uid: uid}));
                 if (!this.props.navigation.state.params.join) {
@@ -131,10 +131,10 @@ export default class settingUpPage extends React.Component {
 
 
     randomToken() {
-        var codes = [];
+        let codes = [];
         const elements = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         // while (true) {
-        for (var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             let randomElement = elements[(Math.random() * 46) | 0];
             codes[i] = randomElement;
         }
@@ -155,8 +155,8 @@ export default class settingUpPage extends React.Component {
         const uid = this.state.uid;
         const mapcode = this.state.mapcode;
         const host = !this.props.navigation.state.params.join;
-        var lat = null;
-        var lng = null;
+        let lat = null;
+        let lng = null;
 
         switch (this.state.botsColor){
             case 'green':this.setState({botsMode: 'random'});
@@ -199,7 +199,7 @@ export default class settingUpPage extends React.Component {
 
             this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid, host:host});
         });
-    }
+    };
 
     checkComplete() {
         if (this.state.name != "" && this.state.description != "") {
@@ -226,7 +226,6 @@ export default class settingUpPage extends React.Component {
                         prompt="Map Color"
                         style={styles.pickers}
                         itemStyle={styles.picker_items}
-                        // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                     >
                         <Picker.Item label="red" value="red"/>
                         <Picker.Item label="blue" value="blue"/>
@@ -382,10 +381,6 @@ export default class settingUpPage extends React.Component {
                                 <Picker.Item label="star" value="grade"/>
                             </Picker>
                         </View>
-
-                        {/*<FormInput*/}
-                        {/*onChangeText={(text) => this.setState({shape: text.toLowerCase()})}*/}
-                        {/*/>*/}
                         {map_form}
                         <View>
                             <Button backgroundColor={buttonC} title="Submit" onPress={() => this.handleSubmit()}

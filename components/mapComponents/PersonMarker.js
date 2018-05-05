@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInput} from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 import {Marker} from 'react-native-maps';
 
 

@@ -1,14 +1,11 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInput} from 'react-native-elements';
+import { Icon, ButtonGroup} from 'react-native-elements';
 
 export default class MenuButtonGroup extends React.Component {
 
     handleAddMarkerCard = () => {
-        console.log("hello!!!!")
         this.props.toggledStatus("add");
-
-    }
+    };
 
     render () {
         const addMarkerIcon = () => <Icon
@@ -19,7 +16,6 @@ export default class MenuButtonGroup extends React.Component {
             }}
             onPress={this.handleAddMarkerCard}
             name="add"
-            // raised={true}
         />
 
         const messagingIcon = () => <Icon
@@ -29,8 +25,7 @@ export default class MenuButtonGroup extends React.Component {
                 justifyContent: 'space-between',
             }}
             name="message"
-            // raised={true}
-        />
+            />
 
         const buttons = [
             {element: addMarkerIcon},

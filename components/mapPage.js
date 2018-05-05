@@ -86,19 +86,19 @@ class mapPage extends React.Component {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     }
-                }))
+                }));
 
                 firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 });
             };
-            
+
             // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
             this.firebaseUpdate('users', 'participants');
 
             //    Second DB query to request landmark information and store to landmarks array in state
-            this.firebaseUpdate('landmarks', 'landmarks')
+            this.firebaseUpdate('landmarks', 'landmarks');
 
             firebase.database().ref(this.mapcode + '/bots')
                 .on('value', (snapshot) => {
@@ -126,7 +126,7 @@ class mapPage extends React.Component {
     //And the map entry is deleted.
     componentWillUnmount() {
         try {
-            this.setState(() => ({mounted: false}))
+            this.setState(() => ({mounted: false}));
             clearInterval(this.interval);
             firebase.database().ref(this.mapcode + '/users/' + this.uid).remove();
         } catch (e) {
@@ -144,13 +144,13 @@ class mapPage extends React.Component {
                 addMarkerCardVisibility: false
             })
         }
-    }
+    };
 
     randomToken () {
         const potentialChar = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         let codes = [];
 
-        for (var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             let randomElement = potentialChar[(Math.random() * 46) | 0];
             codes[i] = randomElement;
         }
@@ -164,7 +164,7 @@ class mapPage extends React.Component {
             ...prevState,
             addMarker: {
                 ...prevState.addMarker,
-                addMarkerName: "Marker" + randomCode
+                addMarkerName: "Marker" + randomCode,
             }
         }));
 
@@ -187,7 +187,7 @@ class mapPage extends React.Component {
                 longitude: prevState.addMarkerCoordinates.longitude + 0.001
             }
         }))
-    }
+    };
 
     firebaseUpdate = (dbAddress, stateArrayName) => {
         firebase.database().ref(this.mapcode + '/' + dbAddress)
@@ -203,19 +203,12 @@ class mapPage extends React.Component {
                         shapeX: childSnapshot.child('shape').val().toString(),
                         colorX: childSnapshot.child('color').val().toString(),
                     });
-                })
+                });
                 this.setState(() => ({[stateArrayName] : tempArray}));
             }, (error) => {
                 console.log("Error", error);
             });
-    }
-
-    //Method to update the location of the addmarker to be right next to the person.
-
-    setAddNewMarkerLocation(personLatitude, personLongitude) {
-        this.setState(prevState => ({}))
-    }
-
+    };
 
     //--------------------------- rendering method ---------------------------
     render() {
@@ -231,7 +224,8 @@ class mapPage extends React.Component {
                     cardStatus = {this.toggleAddMarkerCard}
                     addCardBool = {this.addNewMarkerToDB}
                 />
-            )
+            );
+
             addMarkerItem = (
                 <Marker draggable
                         coordinate={this.state.addMarkerCoordinates}

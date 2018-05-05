@@ -1,19 +1,18 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInput} from 'react-native-elements';
-import {Marker} from 'react-native-maps';
+import {Text} from 'react-native';
+import {Card, Button, FormLabel, FormInput} from 'react-native-elements';
 
 
 export default class AddMarkerCard extends React.Component {
 
     exitAddMarker = () => {
-        console.log("hello!!!!")
+        console.log("hello!!!!");
         this.props.cardStatus("exit");
-    }
+    };
 
     addMarkerToDB = () => {
         this.props.addCardBool();
-    }
+    };
 
     render() {
 
