@@ -5,6 +5,8 @@ import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
 
+import MenuButtonGroup from './MenuButtonGroup';
+
 class mapPage extends React.Component {
 
     static navigationOptions = ({navigation}) => ({
@@ -163,16 +165,24 @@ class mapPage extends React.Component {
         }
     }
 
+    toggleAddMarkerCard(command) {
+        if (command === 'add') {
+            this.setState({
+                addMarkerCardVisibility: true
+            })
+        } else {
+            this.setState({
+                addMarkerCardVisibility: false
+            })
+        }
+    }
+
     exitAddMarker() {
-        this.setState({
-            addMarkerCardVisibility: false
-        })
+
     }
 
     openAddMarkerCard() {
-        this.setState({
-            addMarkerCardVisibility: true
-        })
+
     }
 
     randomToken() {
@@ -221,30 +231,7 @@ class mapPage extends React.Component {
     //--------------------------- rendering method ---------------------------
     render() {
 
-        const addMarkerIcon = () => <Icon
-            size={20}
-            style={{
-                flex: 1,
-                justifyContent: 'space-between',
-            }}
-            onPress={() => this.openAddMarkerCard()}
-            name="add"
-            // raised={true}
-        />
-        const messagingIcon = () => <Icon
-            size={20}
-            style={{
-                flex: 1,
-                justifyContent: 'space-between',
-            }}
-            name="message"
-            // raised={true}
-        />
 
-        const buttons = [
-            {element: addMarkerIcon},
-            {element: messagingIcon}
-        ];
 
 
         //only show add marker option if button pressed.
@@ -264,7 +251,7 @@ class mapPage extends React.Component {
                     </FormLabel>
                     <FormInput/>
                     <Button
-                        onPress={() => this.exitAddMarker()}
+                        onPress={() => this.toggleAddMarkerCard('exit')}
                         buttonStyle={{position: "relative", width: 50, height: 50}}
                         icon={{name: 'clear'}}
                     />
@@ -363,10 +350,9 @@ class mapPage extends React.Component {
                     {addMarkerCard}
                 </View>
 
-                <ButtonGroup
-                    buttons={buttons}
-                    containerStyle={{height: 100, flex: 1}}
-                />
+                <MenuButtonGroup/>
+
+
             </View>
         );
     }
