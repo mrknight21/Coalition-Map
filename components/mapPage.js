@@ -43,7 +43,8 @@ class mapPage extends React.Component {
             currentCoordinates: {
                 latitude: -36.8561968,
                 longitude: 174.7624813,
-            }
+            },
+            mounted: true
 
 
         };
@@ -58,9 +59,12 @@ class mapPage extends React.Component {
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
-            this.interval = setInterval(() => {
-                navigator.geolocation.getCurrentPosition(showPosition)
-            }, 1000);
+            if(this.state.mounted) {
+                this.interval = setInterval(() => {
+                    navigator.geolocation.getCurrentPosition(showPosition)
+                }, 1000);
+            }
+
             this.props.navigation.setParams({
                 clear: () => {
                     clearInterval(this.interval)
@@ -72,6 +76,14 @@ class mapPage extends React.Component {
             const showPosition = (position) => {
                 console.log("getCurrentPosition working!");
                 console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
+
+                this.setState(() => ({
+                    currentCoordinates: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }
+                }))
+
                 firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
@@ -139,6 +151,8 @@ class mapPage extends React.Component {
     //And the map entry is deleted.
     componentWillUnmount() {
         try {
+
+            this.setState(() => ({ mounted: false }))
 
             clearInterval(this.interval);
 
@@ -290,8 +304,8 @@ class mapPage extends React.Component {
                     }}
 
                     initialRegion={{
-                        latitude: -36.856,
-                        longitude: 174.765644,
+                        latitude: this.state.currentCoordinates.latitude,
+                        longitude: this.state.currentCoordinates.longitude,
                         latitudeDelta: 0.01,
                         longitudeDelta: 0.01
                     }}
