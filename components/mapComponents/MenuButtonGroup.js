@@ -4,6 +4,12 @@ import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInp
 
 export default class MenuButtonGroup extends React.Component {
 
+    handleAddMarkerCard = () => {
+        console.log("hello!!!!")
+        this.props.toggledStatus("add");
+
+    }
+
     render () {
         const addMarkerIcon = () => <Icon
             size={20}
@@ -11,7 +17,7 @@ export default class MenuButtonGroup extends React.Component {
                 flex: 1,
                 justifyContent: 'space-between',
             }}
-            // onPress={() => this.toggleAddMarkerCard('add')}
+            onPress={this.handleAddMarkerCard}
             name="add"
             // raised={true}
         />

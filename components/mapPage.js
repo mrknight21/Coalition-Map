@@ -1,11 +1,14 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import ReactNativeElements, {Card, Icon, Button, ButtonGroup, FormLabel, FormInput} from 'react-native-elements';
+import {View} from 'react-native';
+import {Icon} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
 
-import MenuButtonGroup from './MenuButtonGroup';
+import MenuButtonGroup from './mapComponents/MenuButtonGroup';
+import PersonMarker from './mapComponents/PersonMarker';
+import LandmarkMarker from './mapComponents/LandmarkMarker';
+import AddMarkerCard from './mapComponents/AddMarkerCard';
 
 class mapPage extends React.Component {
 
@@ -31,7 +34,7 @@ class mapPage extends React.Component {
         this.state = {
             participants: [],
             landmarks: [],
-            bots:[],
+            bots: [],
             addMarker: {
                 addMarkerDescription: "default",
                 addMarkerCardVisibility: true,
@@ -62,7 +65,7 @@ class mapPage extends React.Component {
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
-            if(this.state.mounted) {
+            if (this.state.mounted) {
                 this.interval = setInterval(() => {
                     navigator.geolocation.getCurrentPosition(showPosition)
                 }, 1000);
@@ -77,8 +80,6 @@ class mapPage extends React.Component {
             // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
 
             const showPosition = (position) => {
-                console.log("getCurrentPosition working!");
-                console.log("Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude);
 
                 this.setState(() => ({
                     currentCoordinates: {
@@ -108,17 +109,12 @@ class mapPage extends React.Component {
                             lng: childSnapshot.child('lng').val().toString(),
                             shapeX: childSnapshot.child('shape').val().toString(),
                             colorX: childSnapshot.child('color').val().toString(),
-
-                            // ...childSnapshot.val()
                         });
                     })
-                    console.log('parti2:');
-                    console.log(participants);
                     this.setState(() => ({participants: participants}));
                 }, (error) => {
                     console.log("Error", error);
                 });
-
 
             //    Second DB query to request landmark information and store to landmarks array in state
 
@@ -138,8 +134,6 @@ class mapPage extends React.Component {
                             // ...childSnapshot.val()
                         });
                     })
-                    console.log('parti2:');
-                    console.log(landmarks);
                     this.setState(() => ({landmarks: landmarks}));
                 }, (error) => {
                     console.log("Error", error);
@@ -172,39 +166,27 @@ class mapPage extends React.Component {
     //And the map entry is deleted.
     componentWillUnmount() {
         try {
-
-            this.setState(() => ({ mounted: false }))
-
+            this.setState(() => ({mounted: false}))
             clearInterval(this.interval);
-
             firebase.database().ref(this.mapcode + '/users/' + this.uid).remove();
-
         } catch (e) {
             console.log("error", e);
         }
     }
 
-    toggleAddMarkerCard(command) {
+    toggleAddMarkerCard = (command) => {
         if (command === 'add') {
             this.setState({
                 addMarkerCardVisibility: true
             })
-        } else {
+        } else if (command === 'exit') {
             this.setState({
                 addMarkerCardVisibility: false
             })
         }
     }
 
-    exitAddMarker() {
-
-    }
-
-    openAddMarkerCard() {
-
-    }
-
-    randomToken() {
+    randomToken () {
         const potentialChar = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         let codes = [];
 
@@ -215,7 +197,7 @@ class mapPage extends React.Component {
         return codes.join("");
     }
 
-    addNewMarkerToDB() {
+    addNewMarkerToDB = () => {
         const randomCode = this.randomToken();
 
         this.setState(prevState => ({
@@ -236,8 +218,15 @@ class mapPage extends React.Component {
         });
 
         this.setState({
-            addMarkerCardVisibility: true
-        })
+            addMarkerCardVisibility: false
+        });
+
+        this.setState(prevState => ({
+            addMarkerCoordinates: {
+                latitude: prevState.addMarkerCoordinates.latitude + 0.001,
+                longitude: prevState.addMarkerCoordinates.longitude + 0.001
+            }
+        }))
     }
 
     //Method to update the location of the addmarker to be right next to the person.
@@ -250,40 +239,18 @@ class mapPage extends React.Component {
     //--------------------------- rendering method ---------------------------
     render() {
 
-
-
-
         //only show add marker option if button pressed.
         let addMarkerCard = null;
         let addMarkerItem = null;
 
         if (this.state.addMarkerCardVisibility) {
-            addMarkerCard = (
-                <Card
-                    title='Add a marker'
-                >
-                    <Text style={{marginBottom: 10}}>
-                        Pick your choice and add!
-                    </Text>
-                    <FormLabel>
-                        Add description to marker
-                    </FormLabel>
-                    <FormInput/>
-                    <Button
-                        onPress={() => this.toggleAddMarkerCard('exit')}
-                        buttonStyle={{position: "relative", width: 50, height: 50}}
-                        icon={{name: 'clear'}}
-                    />
-                    <Button
-                        onPress={() => this.addNewMarkerToDB()}
-                        icon={{name: 'code'}}
-                        backgroundColor='#03A9F4'
-                        buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                        title='ADD'
-                    />
-                </Card>
-            )
 
+            addMarkerCard = (
+                <AddMarkerCard
+                    cardStatus = {this.toggleAddMarkerCard}
+                    addCardBool = {this.addNewMarkerToDB}
+                />
+            )
             addMarkerItem = (
                 <Marker draggable
                         coordinate={this.state.addMarkerCoordinates}
@@ -316,43 +283,16 @@ class mapPage extends React.Component {
                         longitudeDelta: 0.01
                     }}
                 >
-
                     {this.state.participants.map((person) => (
-                        <Marker
-                            key={person.id}
-                            title={person.description}
-                            description={person.nameX}
-                            coordinate={{
-                                latitude: parseFloat(person.lat),
-                                longitude: parseFloat(person.lng),
-                            }}
-                        >
-                            <Icon
-                                name={person.shapeX}
-                                color={person.colorX}
-                                raised={true}
-                                reverse={true}
-                                reverseColor='white'
-                            />
-                        </Marker>
+                        <PersonMarker
+                            {...person}
+                        />
                     ))}
 
-
                     {this.state.landmarks.map((mark) => (
-                    <Marker
-                    key={mark.id}
-                    title={mark.description}
-                    description={mark.nameX}
-                    coordinate={{
-                    latitude: parseFloat(mark.lat),
-                    longitude: parseFloat(mark.lng),
-                    }}
-                    >
-                    <Icon
-                    name={mark.shapeX}
-                    color={mark.colorX}
-                    />
-                    </Marker>
+                        <LandmarkMarker
+                            {...mark}
+                        />
                     ))}
 
                     {this.state.bots.map((bot) => (
@@ -372,13 +312,8 @@ class mapPage extends React.Component {
                             />
                         </Marker>
                     ))}
-
-
-
                     {addMarkerItem}
-
                 </MapView>
-
                 <View
                     style={{
                         position: "absolute",
@@ -388,14 +323,12 @@ class mapPage extends React.Component {
                 >
                     {addMarkerCard}
                 </View>
-
-                <MenuButtonGroup/>
-
-
+                <MenuButtonGroup
+                    toggledStatus={this.toggleAddMarkerCard}
+                />
             </View>
         );
     }
 }
-
 
 export default mapPage;
