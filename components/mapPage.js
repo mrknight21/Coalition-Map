@@ -67,7 +67,10 @@ class mapPage extends React.Component {
 
             if (this.state.mounted) {
                 this.interval = setInterval(() => {
-                    navigator.geolocation.getCurrentPosition(showPosition)
+                    navigator.geolocation.getCurrentPosition(showPosition);
+
+
+                    console.log(this.state.participants)
                 }, 1000);
             }
 
@@ -95,10 +98,10 @@ class mapPage extends React.Component {
             };
 
             // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
-            this.firebaseUpdate('users', 'participants');
+            this.firebaseRetrieving('users', 'participants');
 
             //    Second DB query to request landmark information and store to landmarks array in state
-            this.firebaseUpdate('landmarks', 'landmarks');
+            this.firebaseRetrieving('landmarks', 'landmarks');
 
             firebase.database().ref(this.mapcode + '/bots')
                 .on('value', (snapshot) => {
@@ -151,8 +154,7 @@ class mapPage extends React.Component {
         let codes = [];
 
         for (let i = 0; i < 4; i++) {
-            let randomElement = potentialChar[(Math.random() * 46) | 0];
-            codes[i] = randomElement;
+            codes[i] = potentialChar[(Math.random() * 46) | 0];
         }
         return codes.join("");
     }
@@ -189,7 +191,7 @@ class mapPage extends React.Component {
         }))
     };
 
-    firebaseUpdate = (dbAddress, stateArrayName) => {
+    firebaseRetrieving = (dbAddress, stateArrayName) => {
         firebase.database().ref(this.mapcode + '/' + dbAddress)
             .on('value', (snapshot) => {
                 const tempArray = [];
