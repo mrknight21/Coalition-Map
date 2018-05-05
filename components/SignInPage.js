@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 
 
-import LogInForm from "./loginForm";
+import LogInForm from "./LoginForm";
 
 class signInPage extends React.Component {
     static navigationOptions = {

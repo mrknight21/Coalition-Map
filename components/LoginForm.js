@@ -3,13 +3,12 @@
  */
 import React from 'react';
 import {Text, View, ScrollView, Keyboard,  StyleSheet, Image} from 'react-native';
-import {Card, Button, FormLabel, FormInput} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {Card, Button, FormLabel, FormInput, Icon} from 'react-native-elements';
 
 import firebase from './firebase/firebase';
 Keyboard.dismiss();
 
-export default class LogginForm extends React.Component {
+export default class LoginForm extends React.Component {
 
     constructor(props) {
         super(props);
@@ -52,7 +51,7 @@ export default class LogginForm extends React.Component {
                 >
                     <View>
                         <FormLabel><Icon
-                            name='map-o'
+                            name='map'
                             size={20}
                             color='black'
                         />    MAP CODE</FormLabel>

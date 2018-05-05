@@ -2,9 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {StackNavigator} from 'react-navigation'
 import { Card } from 'react-native-elements';
-import mapPage from './components/mapPage';
-import settingUpPage from './components/settingUpPage';
-import signInPage from './components/signInPage';
+import mapPage from './components/MapPage';
+import settingUpPage from './components/SettingUpPage';
+import signInPage from './components/SignInPage';
 
 const RootStack = StackNavigator(
     {
