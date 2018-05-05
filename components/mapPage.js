@@ -29,6 +29,7 @@ class mapPage extends React.Component {
         this.state = {
             participants: [],
             landmarks: [],
+            bots:[],
             addMarker: {
                 addMarkerDescription: "default",
                 addMarkerCardVisibility: true,
@@ -98,7 +99,7 @@ class mapPage extends React.Component {
                     const participants = [];
                     snapshot.forEach((childSnapshot) => {
                         participants.push({
-                            idKey: childSnapshot.key,
+                            id: childSnapshot.key,
                             nameX: childSnapshot.child("name").val().toString(),
                             description: childSnapshot.child('description').val().toString(),
                             lat: childSnapshot.child('lat').val().toString(),
@@ -138,6 +139,24 @@ class mapPage extends React.Component {
                     console.log('parti2:');
                     console.log(landmarks);
                     this.setState(() => ({landmarks: landmarks}));
+                }, (error) => {
+                    console.log("Error", error);
+                });
+
+
+            firebase.database().ref(this.mapcode + '/bots')
+                .on('value', (snapshot) => {
+                    const bots = [];
+                    snapshot.forEach((childSnapshot) => {
+                        bots.push({
+                            id: childSnapshot.key,
+                            lat: childSnapshot.child('lat').val(),
+                            lng: childSnapshot.child('lng').val(),
+                            color: childSnapshot.child('color').val().toString(),
+                        });
+                    });
+                    console.log(bots);
+                    this.setState(() => ({bots: bots}));
                 }, (error) => {
                     console.log("Error", error);
                 });
@@ -313,7 +332,7 @@ class mapPage extends React.Component {
 
                     {this.state.participants.map((person) => (
                         <Marker
-                            key={person.idKey}
+                            key={person.id}
                             title={person.description}
                             description={person.nameX}
                             coordinate={{
@@ -334,7 +353,7 @@ class mapPage extends React.Component {
 
                     {this.state.landmarks.map((mark) => (
                     <Marker
-                    key={mark.idKey}
+                    key={mark.id}
                     title={mark.description}
                     description={mark.nameX}
                     coordinate={{
@@ -348,6 +367,26 @@ class mapPage extends React.Component {
                     />
                     </Marker>
                     ))}
+
+                    {this.state.bots.map((bot) => (
+                        <Marker
+                            key={bot.id}
+                            title={bot.id}
+                            coordinate={{
+                                latitude: parseFloat(bot.lat).toFixed(7),
+                                longitude: parseFloat(bot.lng).toFixed(7),
+                            }}
+                        >
+                            <Icon
+                                name='android'
+                                color={bot.color}
+                                raised={true}
+                                reverse={true}
+                            />
+                        </Marker>
+                    ))}
+
+
 
                     {addMarkerItem}
 

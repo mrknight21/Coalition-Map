@@ -75,7 +75,7 @@ export default class settingUpPage extends React.Component {
        if(lo_random >0.5){
            bot_lo = parseFloat(center_lng + radius).toFixed(7);
        }else{
-           bot_lo = parseFloat(center_lng = radius).toFixed(7);
+           bot_lo = parseFloat(center_lng - radius).toFixed(7);
        }
 
 

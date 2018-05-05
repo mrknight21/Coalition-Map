@@ -100,8 +100,7 @@ function search_closest(bot, users) {
     idx=distances.indexOf(Math.min.apply(null,distances));
 
     target = users[idx];
-    decision ="";
-
+    decision ={tareget: ta};
 }
 
 // function check_attach() {
