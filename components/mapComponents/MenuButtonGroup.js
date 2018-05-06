@@ -1,8 +1,14 @@
 import React from 'react';
 import { Icon, ButtonGroup} from 'react-native-elements';
 
+/*
+    MenuButtonGroup class component:
+        This is the component which contains the Add landmark and Message buttons.
+ */
+
 export default class MenuButtonGroup extends React.Component {
 
+    // Function which binds up to the parent Map component
     handleAddMarkerCard = () => {
         this.props.toggledStatus("add");
     };

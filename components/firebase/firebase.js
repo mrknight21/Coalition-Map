@@ -1,5 +1,10 @@
 import * as firebase from 'firebase';
 
+/*
+    This is the Firebase connecting JS file where all the Firebase configuration details are stored.
+    This is used by various components when requirring DB functionality.
+*/
+
 const config = {
     apiKey: "AIzaSyB3UTGzWOrLYMR9cjz3D7p1yl-N8IWXUk0",
     authDomain: "coalition-44a07.firebaseapp.com",
@@ -10,7 +15,5 @@ const config = {
 };
 
 fire = firebase.initializeApp(config);
-
-console.log("CONNECTED");
 
 export default fire;

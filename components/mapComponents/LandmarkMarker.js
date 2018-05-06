@@ -2,7 +2,10 @@ import React from 'react';
 import { Icon } from 'react-native-elements';
 import {Marker} from 'react-native-maps';
 
-
+/*
+    LandmarkMarker class component:
+        This is the component for individual landmark markers.
+ */
 export default class LandmarkMarker extends React.Component {
 
     render() {

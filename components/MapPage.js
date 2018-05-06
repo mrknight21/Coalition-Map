@@ -397,7 +397,7 @@ class mapPage extends React.Component {
                         style={{alignContent: 'center'}}>
                         <Text style={{fontSize: 28}}>Messages</Text>
                         {this.state.participants.map((person) => (
-                            <Text>{person.nameX + ": " + person.description}</Text>
+                            <Text key={person.id}>{person.nameX + ": " + person.description}</Text>
                         ))}
                         <FormInput
                             containerStyle={{width: 200}}
