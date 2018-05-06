@@ -57,13 +57,22 @@ export default class settingUpPage extends React.Component {
 
     android_init(mapcode, number, center_lat, center_lng, color) {
 
-
+        /*
+        center_lat, center_lng are the location of the host/creator's geolocation.
+        base on measurement 0.003 degreen is equivalent to 1.5km~2kmm distance.
+        */
         const radius = 0.003;
 
         let botSquad = {};
         for (let i = 1; i <= number; i++) {
         let id = "bot" + i;
 
+        /*
+        the random number decide the direction of the robot's emergence.
+        la_random decide west/east base on (> 0.5/ <0.5)
+         same principle apply to lo_random with north/south
+
+        */
         let la_random = Math.random();
         let lo_random = Math.random();
         console.log(lo_random);
@@ -72,6 +81,9 @@ export default class settingUpPage extends React.Component {
        let bot_la;
        let bot_lo;
 
+       // this code block give the random geolocatio for the new bot with the given direction.
+       // the Math.random*10 give a range of potential gelocation with the direction.
+       // all location are set to 7 places behind decimal as google's standard in google map.
        if(la_random >0.5){
            bot_la = parseFloat(center_lat + radius*10*Math.random()).toFixed(7);
        }else {
@@ -84,26 +96,24 @@ export default class settingUpPage extends React.Component {
            bot_lo = parseFloat(center_lng - radius*10*Math.random()).toFixed(7);
        }
 
-
-
-        console.log(" lat: "+bot_la);
-        console.log(" lng: "+bot_lo);
-
-
             let bot = {
                 id: id,
                 color: color,
                 lat: bot_la,
                 lng: bot_lo
             };
-        console.log(bot);
         botSquad[id]= bot;
         }
-        console.log("finished!!");
         return botSquad;
     }
     //////////////Bot functions////////////////////////////////////////////////////////////
 
+
+   /*
+   This function allow anonymous login.
+   User will be given a temporary token that will used as user id.
+
+    */
     anonymous_login() {
         firebase.auth().signInAnonymously().catch(function (error) {
             // Handle Errors here.
@@ -120,7 +130,6 @@ export default class settingUpPage extends React.Component {
                 this.setState(() => ({uid: uid}));
                 if (!this.props.navigation.state.params.join) {
                     this.randomToken();
-                    console.log("new map id set! " + uid);
                 }
             } else {
                 console.log("user sign out");
@@ -129,26 +138,18 @@ export default class settingUpPage extends React.Component {
     }
 
 
+    //generate random token number as mapcode.
     randomToken() {
         let codes = [];
         const elements = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
-        // while (true) {
         for (let i = 0; i < 4; i++) {
             let randomElement = elements[(Math.random() * 46) | 0];
             codes[i] = randomElement;
         }
-        // let ref = firebase.database().ref(codes.join("") + "/");
-        // console.log(this.ref);
-        // ref.once("value", (snapshot) => {
-        //     if (snapshot.val() === null) {
-        //         break;
-        //     }
-        // });
-        // }
         this.setState({mapcode: codes.join("")});
     }
 
-
+//this funciton handle the final submit click
     handleSubmit() {
         const db = firebase.database();
         const uid = this.state.uid;
@@ -164,13 +165,15 @@ export default class settingUpPage extends React.Component {
                         break;
             case 'orange': this.setState({botsMode:'pet'});
         }
-
+        //this function get the current location of the user as the initial location for database registrtion.
+        //By doing this the risk of encountering undefined or null in next map page is smaller.
         navigator.geolocation.getCurrentPosition((position) => {
             lat = position.coords.latitude;
             lng = position.coords.longitude;
 
             console.log("lat: " + lat + " lng: " + lng);
 
+            //packaging the user's informaiton
             const user = {
                 name: this.state.name,
                 description: this.state.description,
@@ -184,31 +187,35 @@ export default class settingUpPage extends React.Component {
                 color: this.state.mapColor
             };
             db.ref(mapcode + '/users/' + uid).update(user);
+
+            //Only the user that is creating and setting up the map can have the map setting options and control.
             if (host) {
                 db.ref(mapcode + '/setting').set(map);
-                console.log("Bots: "+this.state.botsOn);
-                console.log("BotNum: "+this.state.botsNum);
+
+            ////Only the user that is creating and hosting the map can have the robot options and control.
                 if (this.state.botsOn && this.state.botsNum >0){
                     console.log("reach");
+            //get robots json and set it to the database
                     let bots = this.android_init(mapcode, this.state.botsNum, lat, lng, this.state.botsColor);
                     console.log(bots);
                     db.ref(mapcode + '/bots').set(bots);
                 }
             }
-
             this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid, host:host});
         });
     };
 
+
+    //Checking the required information has been filled
     checkComplete() {
-        if (this.state.name != "" && this.state.description != "") {
-            this.setState({complete: true})
-        } else {
+        if (this.state.name == "" || this.state.description == "") {
             this.setState({complete: false})
+        } else {
+            this.setState({complete: true})
         }
     }
 
-
+    //Only user who is hosting and creating a new map will have this advace form option to setup a map and robots
     mapform() {
         if (!this.props.navigation.state.params.join) {
             return (
@@ -290,24 +297,6 @@ export default class settingUpPage extends React.Component {
                         <Picker.Item label="Rage attacking" value="Rage attacking"/>
                         <Picker.Item label="Cute pet" value="Cute pet"/>
                     </Picker>
-
-
-
-                    {/*<Picker*/}
-                        {/*selectedValue={this.state.botsColor}*/}
-                        {/*onValueChange={(itemValue, itemIndex) => this.setState({mapColor: itemValue.toLowerCase()})}*/}
-                        {/*prompt="Map Color"*/}
-                        {/*style={styles.pickers}*/}
-                        {/*itemStyle={styles.picker_items}*/}
-                        {/*// onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}*/}
-                    {/*>*/}
-                        {/*<Picker.Item label="red" value="red"/>*/}
-                        {/*<Picker.Item label="blue" value="blue"/>*/}
-                        {/*<Picker.Item label="green" value="green"/>*/}
-                        {/*<Picker.Item label="yellow" value="yellow"/>*/}
-                        {/*<Picker.Item label="grey" value="grey"/>*/}
-                        {/*<Picker.Item label="black" value="black"/>*/}
-                    {/*</Picker>*/}
                 </ScrollView>
             )
         }
@@ -316,11 +305,9 @@ export default class settingUpPage extends React.Component {
     render() {
         const map_form = this.mapform();
         const complete = this.state.complete;
+        //Change the color of submit button base on the completeness of required informaiton.
         const buttonC = complete ? "orange" : "grey";
 
-        // if(this.state.name !== "" && this.state.description !=="" ){
-        //     this.setState({complete:true});
-        // }
 
 
         return (

@@ -42,6 +42,7 @@ class mapPage extends React.Component {
     });
 
     //  Constructor setting out all the states used in the Map component.
+    // target is geolocation where all the robots are moving toward.
 
     constructor(props) {
         super(props);
@@ -100,49 +101,30 @@ class mapPage extends React.Component {
 
 
                     if(this.state.bots.length >0) {
-                    // firebase.database().ref(this.mapcode + '/users')
-                    //     .once('value', (snapshot) => {
-                    //         const users = [];
-                    //         snapshot.forEach((childSnapshot) => {
-                    //             users.push({
-                    //                 id: childSnapshot.key,
-                    //                 nameX: childSnapshot.child("name").val().toString(),
-                    //                 description: childSnapshot.child('description').val().toString(),
-                    //                 lat: childSnapshot.child('lat').val().toString(),
-                    //                 lng: childSnapshot.child('lng').val().toString(),
-                    //                 shapeX: childSnapshot.child('shape').val().toString(),
-                    //                 colorX: childSnapshot.child('color').val().toString(),
-                    //             });
-                    //         });
-                    //         console.log("line 93:"+ users);
-                    //                 let bot = this.state.bots;
-                    //                 let distances = [];
-                    //                 for(let j =0; j<users.length;j++){
-                    //                     distances.push((Math.abs(users[j].lat-bot.lat)+Math.abs(users[j].lng-bot.lng)))
-                    //                 }
-                    //                 console.log(distances);
-                    //                 const idx=distances.indexOf(Math.min.apply(null,distances));
-                    //                 console.log(idx);
                         this.state.bots.map((bot)=>{
-                                    const closest_user = this.state.target;
+                                    const target_user = this.state.target;
 
-                                    const radius = 0.0002;
+                                    const step = 0.0002;
+                                    //Deciding new geolocation of the bot
                                     let new_coor = {lat:0, lng:0};
-                                    if ((bot.lat-closest_user.lat) > 0){
-                                        new_coor.lat = bot.lat-radius;
+                                    
+                                    //Deciding which direction to move. lat decide west/east, lng decide north/south
+                                    //After movement direction is decided it is times by step which 0.0002 dgree, around 100 ~200 m.
+                                    if ((bot.lat-target_user.lat) > 0){
+                                        new_coor.lat = bot.lat-step;
                                     }else {
-                                        new_coor.lat = bot.lat+radius;
+                                        new_coor.lat = bot.lat+step;
                                     }
-                                    if((bot.lng-closest_user.lng) > 0){
-                                        new_coor.lng = bot.lng-radius;
+                                    if((bot.lng-target_user.lng) > 0){
+                                        new_coor.lng = bot.lng-step;
                                     }else{
-                                        new_coor.lng = bot.lng+radius;
+                                        new_coor.lng = bot.lng+step;
                                     }
 
-                                    //let coor = this.android_move(bot, closest_user);
+                                    
                                     bot.lat = parseFloat(new_coor.lat).toFixed(7);
                                     bot.lng = parseFloat(new_coor.lng).toFixed(7);
-                                    //this.setState({bots:bot});
+                                   //Update database with new bot geolocation
                                     firebase.database().ref(this.mapcode + "/bots/" + bot.id).update({lat:bot.lat, lng:bot.lng});
                             }, (error) => {
                             console.log("Error", error);
@@ -170,6 +152,7 @@ class mapPage extends React.Component {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     },
+                    //Consistently update the target value from the user's current position
                     target:{
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
