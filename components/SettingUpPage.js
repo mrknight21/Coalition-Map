@@ -6,6 +6,15 @@ import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
 //import bot from '../script/random_walk';
 
+/*
+    settingUpPage class component:
+        This is the intermediate page where users either:
+            (a) Create a new map as a host
+            (b) Join an existing map
+        Users can input their choices as to color and icon.
+        (AND hosts can have a easter egg feature where they can get chased
+        by an Android zombie to have fun when they are alone).
+ */
 
 export default class settingUpPage extends React.Component {
     static navigationOptions = {
@@ -18,7 +27,6 @@ export default class settingUpPage extends React.Component {
             fontWeight: 'bold',
         },
     };
-
 
     constructor(props) {
         super(props);
@@ -38,7 +46,6 @@ export default class settingUpPage extends React.Component {
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-
 
     componentDidMount() {
         this.anonymous_login();
@@ -95,14 +102,7 @@ export default class settingUpPage extends React.Component {
         console.log("finished!!");
         return botSquad;
     }
-
-
-
-
     //////////////Bot functions////////////////////////////////////////////////////////////
-
-
-
 
     anonymous_login() {
         firebase.auth().signInAnonymously().catch(function (error) {

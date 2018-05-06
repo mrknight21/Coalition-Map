@@ -2,14 +2,17 @@ import React from 'react';
 import {Icon} from 'react-native-elements';
 import {Marker} from 'react-native-maps';
 
-
+/*
+    PersonMarker class component:
+        This is the component for individual person markers.
+ */
 export default class PersonMarker extends React.Component {
 
     render() {
 
         return (
             <Marker
-                key={this.props.id}
+                // key={this.props.id}
                 title={this.props.description}
                 description={this.props.nameX}
                 coordinate={{

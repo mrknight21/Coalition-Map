@@ -1,19 +1,28 @@
 import React from 'react';
-import {View} from 'react-native';
-import {Icon} from 'react-native-elements';
+import {View, Text, ScrollView} from 'react-native';
+import {Icon, Button, FormInput} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
-import Android_bot from './Android_bot';
-
-
-
+import Overlay from 'react-native-modal-overlay';
 import MenuButtonGroup from './mapComponents/MenuButtonGroup';
 import PersonMarker from './mapComponents/PersonMarker';
 import LandmarkMarker from './mapComponents/LandmarkMarker';
 import AddMarkerCard from './mapComponents/AddMarkerCard';
 
+/*
+MAP COMPONENT:
+>   This component is the Map component where all the user interaction will occur.
+>   Due to the considerable logic required for this component, further smaller components have been created and imported
+    here.
+
+Note #1.    For these smaller components, see the ./mapComponents folder.
+
+ */
+
 class mapPage extends React.Component {
+
+    // Navigator static parameters
 
     static navigationOptions = ({navigation}) => ({
         title: 'Map: ' + navigation.state.params.mapcode,
@@ -32,6 +41,8 @@ class mapPage extends React.Component {
             }}/> : null
     });
 
+    //  Constructor setting out all the states used in the Map component.
+
     constructor(props) {
         super(props);
         this.state = {
@@ -45,7 +56,7 @@ class mapPage extends React.Component {
             addMarker: {
                 addMarkerDescription: "default",
                 addMarkerCardVisibility: true,
-                addMarkerColor: "red",
+                addMarkerColor: "green",
                 addMarkerShape: "beenhere",
                 addMarkerName: ""
             },
@@ -57,7 +68,9 @@ class mapPage extends React.Component {
                 latitude: -36.8561968,
                 longitude: 174.7624813,
             },
-            mounted: true
+            mounted: true,
+            modalVisible: false,
+            messageText: ""
 
 
         };
@@ -66,16 +79,23 @@ class mapPage extends React.Component {
         this.host = this.props.navigation.state.params.host;
     }
 
-    // // ---------------- Component lifecycle methods -----------------------------
+    // ---------------- Component lifecycle methods -----------------------------
+
+    //  A. ComponentDidMount lifecycle, where actions taken when the component is loaded.
+
     componentDidMount() {
 
         try {
-            /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
-            seconds and then firing the showPosition method() */
 
+            /* Checks whether state is mounted, and if so does two things during 1 second intervals:
 
-            if(this.state.mounted) {
-                this.interval = setInterval(() =>{
+                (1)     Getting Robot/Zombie's and setting their locations.
+                (2)     Using getCurrentPosition method on the geolocation to get the current location of user device
+                        and then firing the showPosition method()
+
+            */
+            if (this.state.mounted) {
+                this.interval = setInterval(() => {
 
 
 
@@ -138,8 +158,11 @@ class mapPage extends React.Component {
                 }
             });
 
-            // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
+            /* showPosition() method, which does the following:
+                    (1) using position obtained to get the exact latitude and longitude and storing to DB;
+                    (2) updates current Coordinates state.
 
+             */
             const showPosition = (position) => {
 
                 this.setState(() => ({
@@ -159,10 +182,12 @@ class mapPage extends React.Component {
                 });
             };
 
-            // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
+            // Following two database queries use the firebaseRetrieving Function defined further below.
+
+            //  #1 Firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
             this.firebaseRetrieving('users', 'participants');
 
-            //    Second DB query to request landmark information and store to landmarks array in state
+            //  #2 DB query to request landmark information and store to landmarks array in state
             this.firebaseRetrieving('landmarks', 'landmarks');
 
             firebase.database().ref(this.mapcode + '/bots')
@@ -187,8 +212,14 @@ class mapPage extends React.Component {
         }
     }
 
-    //When the map component dismounts, the interval updating current location is cleared
-    //And the map entry is deleted.
+    /* B. ComponentWillUnmount lifecycle: just before the component dismounts
+
+        (a) The user's current location is cleared.
+        (b) This is updated to the Firebase database.
+
+        Design rationale: This is to ensure that the map will only show active users, and prevent cluttering
+        of non-active users.
+    */
     componentWillUnmount() {
         try {
             this.setState(() => ({mounted: false}));
@@ -199,11 +230,27 @@ class mapPage extends React.Component {
         }
     }
 
+    // --------------------- Functions used in Map Component --------------------------------------------//
+
+    /*  This function allows toggling of Adding Marker Card.
+
+        (a) This opens a Card where you can write the description for a new landmark marker
+        (b) When the adding Marker Card is opened, a new marker is displayed +0.001 GPS longitude and latitude to the
+            user's location.
+
+        Design rationale: new markers are always displayed near the users current location for better usability.
+    */
     toggleAddMarkerCard = (command) => {
         if (command === 'add') {
             this.setState({
-                addMarkerCardVisibility: true
-            })
+                addMarkerCardVisibility: true,
+            });
+            this.setState((prevState) => ({
+                addMarkerCoordinates: {
+                    latitude: prevState.currentCoordinates.latitude + 0.001,
+                    longitude: prevState.currentCoordinates.longitude + 0.001
+                }
+            }));
         } else if (command === 'exit') {
             this.setState({
                 addMarkerCardVisibility: false
@@ -211,7 +258,8 @@ class mapPage extends React.Component {
         }
     };
 
-    randomToken () {
+    //  Function to create Random token to assign unique values, used throughout the component.
+    randomToken() {
         const potentialChar = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         let codes = [];
 
@@ -220,38 +268,46 @@ class mapPage extends React.Component {
         }
         return codes.join("");
     }
-    addNewMarkerToDB = () => {
-        const randomCode = this.randomToken();
 
-        this.setState(prevState => ({
-            ...prevState,
-            addMarker: {
-                ...prevState.addMarker,
-                addMarkerName: "Marker" + randomCode,
-            }
-        }));
+    //  Function to add new landmark marker to database
+    addNewMarkerToDB = (markerDescription) => {
+        const randomCode = this.randomToken();
 
         firebase.database().ref(this.mapcode + '/landmarks/' + randomCode).set({
             lat: this.state.addMarkerCoordinates.latitude,
             lng: this.state.addMarkerCoordinates.longitude,
-            description: this.state.addMarker.addMarkerDescription,
+            description: markerDescription,
             shape: this.state.addMarker.addMarkerShape,
-            name: this.state.addMarker.addMarkerName,
+            name: "Marker" + randomCode,
             color: this.state.addMarker.addMarkerColor
         });
 
         this.setState({
             addMarkerCardVisibility: false
         });
-
-        this.setState(prevState => ({
-            addMarkerCoordinates: {
-                latitude: prevState.addMarkerCoordinates.latitude + 0.001,
-                longitude: prevState.addMarkerCoordinates.longitude + 0.001
-            }
-        }))
     };
 
+    /*  Function to change the message that the user wants to convey to others.
+        Note.   The user can only have one message at any one time. This is specifically by design as it simplifies a
+                potentially chaotic messaging situation where there are many users. The message synchronises with the
+                description of the users live marker.
+    */
+    changeMessage = () => {
+        firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
+            description: this.state.messageText
+        });
+    };
+
+    // Function which toggles the messages modal on and off
+    toggleMessagesModal = () => {
+        if (this.state.modalVisible) {
+            this.setState({modalVisible: false})
+        } else {
+            this.setState({modalVisible: true})
+        }
+    };
+
+    // Reusable function that retrieves Firebase DB entries.
     firebaseRetrieving = (dbAddress, stateArrayName) => {
         firebase.database().ref(this.mapcode + '/' + dbAddress)
             .on('value', (snapshot) => {
@@ -267,53 +323,31 @@ class mapPage extends React.Component {
                         colorX: childSnapshot.child('color').val().toString(),
                     });
                 });
-                this.setState(() => ({[stateArrayName] : tempArray}));
+                this.setState(() => ({[stateArrayName]: tempArray}));
             }, (error) => {
                 console.log("Error", error);
             });
     };
 
-    //--------------------------- rendering method ---------------------------
+    //--------------------------- Rendering method -----------------------------------------//
     render() {
 
-        //only show add marker option if button pressed.
+        // Setting up of various variables that will be used.
         let addMarkerCard = null;
         let addMarkerItem = null;
-        let botmark = null;
 
-
-
-        // if(this.state.bots !== null){
-        //     botmark = (
-        //         this.state.bots.map((bot) => (
-        //             <Marker
-        //                 key={bot.id}
-        //                 title={bot.id}
-        //                 coordinate={{
-        //                     latitude: parseFloat(bot.lat),
-        //                     longitude: parseFloat(bot.lng),
-        //                 }}
-        //             >
-        //                 <Icon
-        //                     name='android'
-        //                     color={bot.color}
-        //                     raised={true}
-        //                     reverse={true}
-        //                 />
-        //             </Marker>
-        //         ))
-        //     );
-        // }
-
+        /*
+        Where the marker Card has been opened, then:
+            (a) The addMarkerCard variable will contain the marker Component.
+            (b) The addMarkerItem variable will contain the draggable landmark Marker.
+        */
         if (this.state.addMarkerCardVisibility) {
-
             addMarkerCard = (
                 <AddMarkerCard
-                    cardStatus = {this.toggleAddMarkerCard}
-                    addCardBool = {this.addNewMarkerToDB}
+                    cardStatus={this.toggleAddMarkerCard}
+                    addCardBool={this.addNewMarkerToDB}
                 />
             );
-
             addMarkerItem = (
                 <Marker draggable
                         coordinate={this.state.addMarkerCoordinates}
@@ -323,22 +357,26 @@ class mapPage extends React.Component {
                 >
                     <Icon
                         name="beenhere"
-                        color="pink"
+                        color="grey"
+                        size={100}
                     />
                 </Marker>
             )
         }
-
+        /*
+        The following is the JSX to be rendered from the Map Component:
+            (a) For every user who has joined the map, a PersonMarker component will be displayed.
+            (b) For every landmark that has been placed by a user, a Landmark component will be displayed.
+            (c) MapButtonGroup component gives users options to ADD a landmark, or MESSAGE with other users.
+            (d) Messages overlay, when it is opened then the messages of all the users are displayed.
+        */
         return (
             <View style={{flex: 1, alignItems: 'stretch'}}>
-
                 {/*Card for displaying marker addition*/}
-
                 <MapView
                     style={{
                         flex: 8,
                     }}
-
                     initialRegion={{
                         latitude: this.state.currentCoordinates.latitude,
                         longitude: this.state.currentCoordinates.longitude,
@@ -348,6 +386,7 @@ class mapPage extends React.Component {
                 >
                     {this.state.participants.map((person) => (
                         <PersonMarker
+                            key={person.id}
                             {...person}
                         />
                     ))}
@@ -391,7 +430,37 @@ class mapPage extends React.Component {
                 </View>
                 <MenuButtonGroup
                     toggledStatus={this.toggleAddMarkerCard}
+                    messagesToggled={this.toggleMessagesModal}
                 />
+                <Overlay visible={this.state.modalVisible}
+                         closeOnTouchOutside animationType="zoomIn"
+                         containerStyle={{backgroundColor: 'rgba(37, 8, 10, 0.78)'}}
+                         childrenWrapperStyle={{backgroundColor: '#eee'}}
+                         animationDuration={500}>
+                    <ScrollView
+                        style={{alignContent: 'center'}}>
+                        <Text style={{fontSize: 28}}>Messages</Text>
+                        {this.state.participants.map((person) => (
+                            <Text key={person.id}>{person.nameX + ": " + person.description}</Text>
+                        ))}
+                        <FormInput
+                            containerStyle={{width: 200}}
+                            onChangeText={(text) => this.setState({messageText: text})}
+                        />
+                        <Button
+                            onPress={this.toggleMessagesModal}
+                            buttonStyle={{position: "relative", width: 50, height: 50}}
+                            icon={{name: 'clear'}}
+                        />
+                        <Button
+                            onPress={this.changeMessage}
+                            icon={{name: 'code'}}
+                            backgroundColor='#03A9F4'
+                            buttonStyle={{width: 200, borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+                            title='SEND'
+                        />
+                    </ScrollView>
+                </Overlay>
             </View>
         );
     }

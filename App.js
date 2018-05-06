@@ -6,6 +6,15 @@ import mapPage from './components/MapPage';
 import settingUpPage from './components/SettingUpPage';
 import signInPage from './components/SignInPage';
 
+/*
+    The top level application component containing:
+        (a) Stack Navigator variable
+        (b) Rendering this Stack Navigator as RootStack
+
+    Design rationale:   Navigator components have been chosen for organising navigation routes between the three various
+                        Pages (SignInPage, settingUpPage, and mapPage).
+ */
+
 const RootStack = StackNavigator(
     {
         signIn: {
@@ -15,7 +24,7 @@ const RootStack = StackNavigator(
             screen: settingUpPage,
         },
         map: {
-            screen:mapPage,
+            screen: mapPage,
         }
     },
     {
