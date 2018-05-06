@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, ScrollView} from 'react-native';
-import {Icon, Button, FormLabel, FormInput} from 'react-native-elements';
+import {Icon, Button, FormInput} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
@@ -161,7 +161,7 @@ class mapPage extends React.Component {
              */
             const showPosition = (position) => {
 
-                this.setState((prevstate) => ({
+                this.setState(() => ({
                     currentCoordinates: {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude
@@ -174,24 +174,13 @@ class mapPage extends React.Component {
                 });
             };
 
+            // Following two database queries use the firebaseRetrieving Function defined further below.
+
             //  #1 Firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
             this.firebaseRetrieving('users', 'participants');
 
             //  #2 DB query to request landmark information and store to landmarks array in state
             this.firebaseRetrieving('landmarks', 'landmarks');
-
-            // firebase.database().ref(this.mapcode + '/bots')
-            //     .on('value', (snapshot) => {
-            //         let bots;
-            //             bots={
-            //                 id: snapshot.child('id').val().toString(),
-            //                 lat: snapshot.child('lat').val(),
-            //                 lng: snapshot.child('lng').val(),
-            //                 color: snapshot.child('color').val().toString(),
-            //             };
-            //         console.log(bots);
-            //         this.setState({bots: bots});
-            //         });
 
         } catch (e) {
             console.log("error", e);
@@ -219,14 +208,13 @@ class mapPage extends React.Component {
     // --------------------- Functions used in Map Component --------------------------------------------//
 
     /*  This function allows toggling of Adding Marker Card.
+
         (a) This opens a Card where you can write the description for a new landmark marker
         (b) When the adding Marker Card is opened, a new marker is displayed +0.001 GPS longitude and latitude to the
             user's location.
 
-        Design rationale:
-
+        Design rationale: new markers are always displayed near the users current location for better usability.
     */
-
     toggleAddMarkerCard = (command) => {
         if (command === 'add') {
             this.setState({
@@ -245,6 +233,7 @@ class mapPage extends React.Component {
         }
     };
 
+    //  Function to create Random token to assign unique values, used throughout the component.
     randomToken() {
         const potentialChar = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         let codes = [];
@@ -255,6 +244,7 @@ class mapPage extends React.Component {
         return codes.join("");
     }
 
+    //  Function to add new landmark marker to database
     addNewMarkerToDB = (markerDescription) => {
         const randomCode = this.randomToken();
 
@@ -272,20 +262,27 @@ class mapPage extends React.Component {
         });
     };
 
+    /*  Function to change the message that the user wants to convey to others.
+        Note.   The user can only have one message at any one time. This is specifically by design as it simplifies a
+                potentially chaotic messaging situation where there are many users. The message synchronises with the
+                description of the users live marker.
+    */
     changeMessage = () => {
         firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
             description: this.state.messageText
         });
-    }
+    };
 
+    // Function which toggles the messages modal on and off
     toggleMessagesModal = () => {
         if (this.state.modalVisible) {
-            this.setState({modalVisible : false})
+            this.setState({modalVisible: false})
         } else {
-            this.setState({modalVisible : true})
+            this.setState({modalVisible: true})
         }
-    }
+    };
 
+    // Reusable function that retrieves Firebase DB entries.
     firebaseRetrieving = (dbAddress, stateArrayName) => {
         firebase.database().ref(this.mapcode + '/' + dbAddress)
             .on('value', (snapshot) => {
@@ -307,46 +304,26 @@ class mapPage extends React.Component {
             });
     };
 
-    //--------------------------- rendering method ---------------------------
+    //--------------------------- Rendering method -----------------------------------------//
     render() {
 
-        //only show add marker option if button pressed.
+        // Setting up of various variables that will be used.
         let addMarkerCard = null;
         let addMarkerItem = null;
         let botmark = null;
 
-        console.log(this.state.bots);
-
-
-        // if(this.state.bots !== null){
-        //     botmark = (
-        //         <Marker
-        //             key={this.state.bots.id}
-        //             title={this.state.bots.id}
-        //             coordinate={{
-        //                 latitude: parseFloat(this.state.bots.lat),
-        //                 longitude: parseFloat(this.state.bots.lng),
-        //             }}
-        //         >
-        //             <Icon
-        //                 name='android'
-        //                 color={this.state.bots.color}
-        //                 raised={true}
-        //                 reverse={true}
-        //             />
-        //         </Marker>
-        //     );
-        // }
-
+        /*
+        Where the marker Card has been opened, then:
+            (a) The addMarkerCard variable will contain the marker Component.
+            (b) The addMarkerItem variable will contain the draggable landmark Marker.
+        */
         if (this.state.addMarkerCardVisibility) {
-
             addMarkerCard = (
                 <AddMarkerCard
                     cardStatus={this.toggleAddMarkerCard}
                     addCardBool={this.addNewMarkerToDB}
                 />
             );
-
             addMarkerItem = (
                 <Marker draggable
                         coordinate={this.state.addMarkerCoordinates}
@@ -362,17 +339,20 @@ class mapPage extends React.Component {
                 </Marker>
             )
         }
-
+        /*
+        The following is the JSX to be rendered from the Map Component:
+            (a) For every user who has joined the map, a PersonMarker component will be displayed.
+            (b) For every landmark that has been placed by a user, a Landmark component will be displayed.
+            (c) MapButtonGroup component gives users options to ADD a landmark, or MESSAGE with other users.
+            (d) Messages overlay, when it is opened then the messages of all the users are displayed.
+        */
         return (
             <View style={{flex: 1, alignItems: 'stretch'}}>
-
                 {/*Card for displaying marker addition*/}
-
                 <MapView
                     style={{
                         flex: 8,
                     }}
-
                     initialRegion={{
                         latitude: this.state.currentCoordinates.latitude,
                         longitude: this.state.currentCoordinates.longitude,
@@ -405,17 +385,16 @@ class mapPage extends React.Component {
                     {addMarkerCard}
                 </View>
                 <MenuButtonGroup
-                    toggledStatus= {this.toggleAddMarkerCard}
+                    toggledStatus={this.toggleAddMarkerCard}
                     messagesToggled={this.toggleMessagesModal}
                 />
-
                 <Overlay visible={this.state.modalVisible}
                          closeOnTouchOutside animationType="zoomIn"
                          containerStyle={{backgroundColor: 'rgba(37, 8, 10, 0.78)'}}
                          childrenWrapperStyle={{backgroundColor: '#eee'}}
                          animationDuration={500}>
                     <ScrollView
-                        style={{alignContent:'center'}}>
+                        style={{alignContent: 'center'}}>
                         <Text style={{fontSize: 28}}>Messages</Text>
                         {this.state.participants.map((person) => (
                             <Text>{person.nameX + ": " + person.description}</Text>
@@ -438,8 +417,6 @@ class mapPage extends React.Component {
                         />
                     </ScrollView>
                 </Overlay>
-
-
             </View>
         );
     }

@@ -9,7 +9,7 @@ export default class MenuButtonGroup extends React.Component {
 
     handleMessageButton = () => {
         this.props.messagesToggled();
-    }
+    };
 
     render () {
         const addMarkerIcon = () => <Icon
