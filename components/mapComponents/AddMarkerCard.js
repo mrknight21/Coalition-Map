@@ -5,13 +5,19 @@ import {Card, Button, FormLabel, FormInput} from 'react-native-elements';
 
 export default class AddMarkerCard extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            description: ""
+        }
+    }
+
     exitAddMarker = () => {
-        console.log("hello!!!!");
         this.props.cardStatus("exit");
     };
 
     addMarkerToDB = () => {
-        this.props.addCardBool();
+        this.props.addCardBool(this.state.description);
     };
 
     render() {
@@ -26,7 +32,9 @@ export default class AddMarkerCard extends React.Component {
                 <FormLabel>
                     Add description to marker
                 </FormLabel>
-                <FormInput/>
+                <FormInput
+                    onChangeText={(text) => this.setState({description: text})}
+                />
                 <Button
                     onPress={this.exitAddMarker}
                     buttonStyle={{position: "relative", width: 50, height: 50}}

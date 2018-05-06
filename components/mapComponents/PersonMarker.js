@@ -9,7 +9,7 @@ export default class PersonMarker extends React.Component {
 
         return (
             <Marker
-                key={this.props.id}
+                // key={this.props.id}
                 title={this.props.description}
                 description={this.props.nameX}
                 coordinate={{

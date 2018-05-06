@@ -15,7 +15,7 @@ const RootStack = StackNavigator(
             screen: settingUpPage,
         },
         map: {
-            screen:mapPage,
+            screen: mapPage,
         }
     },
     {

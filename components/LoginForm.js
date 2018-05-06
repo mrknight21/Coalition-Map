@@ -58,7 +58,7 @@ export default class LogginForm extends React.Component {
                         />    MAP CODE</FormLabel>
                         <FormInput
                             onChangeText={(text) => this.setState({mapcode: text})}
-                            placeholder="Hello Enter the mapp code to proceed"
+                            placeholder="Hello Enter the map code to proceed"
                         >
                         </FormInput>
                     </View>

@@ -41,7 +41,7 @@ class mapPage extends React.Component {
             addMarker: {
                 addMarkerDescription: "default",
                 addMarkerCardVisibility: true,
-                addMarkerColor: "red",
+                addMarkerColor: "green",
                 addMarkerShape: "beenhere",
                 addMarkerName: ""
             },
@@ -140,10 +140,10 @@ class mapPage extends React.Component {
 
             const showPosition = (position) => {
 
-                this.setState(() => ({
+                this.setState((prevstate) => ({
                     currentCoordinates: {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
                     }
                 }));
 
@@ -159,18 +159,18 @@ class mapPage extends React.Component {
             //    Second DB query to request landmark information and store to landmarks array in state
             this.firebaseRetrieving('landmarks', 'landmarks');
 
-            firebase.database().ref(this.mapcode + '/bots')
-                .on('value', (snapshot) => {
-                    let bots;
-                        bots={
-                            id: snapshot.child('id').val().toString(),
-                            lat: snapshot.child('lat').val(),
-                            lng: snapshot.child('lng').val(),
-                            color: snapshot.child('color').val().toString(),
-                        };
-                    console.log(bots);
-                    this.setState({bots: bots});
-                    });
+            // firebase.database().ref(this.mapcode + '/bots')
+            //     .on('value', (snapshot) => {
+            //         let bots;
+            //             bots={
+            //                 id: snapshot.child('id').val().toString(),
+            //                 lat: snapshot.child('lat').val(),
+            //                 lng: snapshot.child('lng').val(),
+            //                 color: snapshot.child('color').val().toString(),
+            //             };
+            //         console.log(bots);
+            //         this.setState({bots: bots});
+            //         });
 
         } catch (e) {
             console.log("error", e);
@@ -192,8 +192,14 @@ class mapPage extends React.Component {
     toggleAddMarkerCard = (command) => {
         if (command === 'add') {
             this.setState({
-                addMarkerCardVisibility: true
-            })
+                addMarkerCardVisibility: true,
+            });
+            this.setState((prevState) => ({
+               addMarkerCoordinates: {
+                   latitude: prevState.currentCoordinates.latitude + 0.001,
+                   longitude: prevState.currentCoordinates.longitude + 0.001
+               }
+            }));
         } else if (command === 'exit') {
             this.setState({
                 addMarkerCardVisibility: false
@@ -210,13 +216,14 @@ class mapPage extends React.Component {
         }
         return codes.join("");
     }
-    addNewMarkerToDB = () => {
+    addNewMarkerToDB = (markerDescription) => {
         const randomCode = this.randomToken();
 
         this.setState(prevState => ({
             ...prevState,
             addMarker: {
                 ...prevState.addMarker,
+                addMarkerDescription: markerDescription,
                 addMarkerName: "Marker" + randomCode,
             }
         }));
@@ -234,12 +241,12 @@ class mapPage extends React.Component {
             addMarkerCardVisibility: false
         });
 
-        this.setState(prevState => ({
-            addMarkerCoordinates: {
-                latitude: prevState.addMarkerCoordinates.latitude + 0.001,
-                longitude: prevState.addMarkerCoordinates.longitude + 0.001
-            }
-        }))
+        // this.setState(prevState => ({
+        //     addMarkerCoordinates: {
+        //         latitude: prevState.addMarkerCoordinates.latitude + 0.001,
+        //         longitude: prevState.addMarkerCoordinates.longitude + 0.001
+        //     }
+        // }))
     };
 
     firebaseRetrieving = (dbAddress, stateArrayName) => {
@@ -274,25 +281,25 @@ class mapPage extends React.Component {
         console.log(this.state.bots);
 
 
-        if(this.state.bots !== null){
-            botmark = (
-                <Marker
-                    key={this.state.bots.id}
-                    title={this.state.bots.id}
-                    coordinate={{
-                        latitude: parseFloat(this.state.bots.lat),
-                        longitude: parseFloat(this.state.bots.lng),
-                    }}
-                >
-                    <Icon
-                        name='android'
-                        color={this.state.bots.color}
-                        raised={true}
-                        reverse={true}
-                    />
-                </Marker>
-            );
-        }
+        // if(this.state.bots !== null){
+        //     botmark = (
+        //         <Marker
+        //             key={this.state.bots.id}
+        //             title={this.state.bots.id}
+        //             coordinate={{
+        //                 latitude: parseFloat(this.state.bots.lat),
+        //                 longitude: parseFloat(this.state.bots.lng),
+        //             }}
+        //         >
+        //             <Icon
+        //                 name='android'
+        //                 color={this.state.bots.color}
+        //                 raised={true}
+        //                 reverse={true}
+        //             />
+        //         </Marker>
+        //     );
+        // }
 
         if (this.state.addMarkerCardVisibility) {
 
@@ -312,7 +319,8 @@ class mapPage extends React.Component {
                 >
                     <Icon
                         name="beenhere"
-                        color="pink"
+                        color="grey"
+                        size={100}
                     />
                 </Marker>
             )
@@ -337,6 +345,7 @@ class mapPage extends React.Component {
                 >
                     {this.state.participants.map((person) => (
                         <PersonMarker
+                            key={person.id}
                             {...person}
                         />
                     ))}
@@ -346,7 +355,6 @@ class mapPage extends React.Component {
                             {...mark}
                         />
                     ))}
-
                     {addMarkerItem}
                 </MapView>
                 <View

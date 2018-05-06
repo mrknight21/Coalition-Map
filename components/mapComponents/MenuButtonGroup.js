@@ -9,7 +9,7 @@ export default class MenuButtonGroup extends React.Component {
 
     render () {
         const addMarkerIcon = () => <Icon
-            size={20}
+            size={50}
             style={{
                 flex: 1,
                 justifyContent: 'space-between',
@@ -19,7 +19,7 @@ export default class MenuButtonGroup extends React.Component {
         />
 
         const messagingIcon = () => <Icon
-            size={20}
+            size={50}
             style={{
                 flex: 1,
                 justifyContent: 'space-between',

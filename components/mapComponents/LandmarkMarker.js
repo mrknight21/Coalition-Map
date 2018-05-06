@@ -20,6 +20,7 @@ export default class LandmarkMarker extends React.Component {
                 <Icon
                     name={this.props.shapeX}
                     color={this.props.colorX}
+                    size={30}
                 />
             </Marker>
         )
