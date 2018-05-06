@@ -2,8 +2,8 @@
  * Created by Administer on 10/04/2018.
  */
 import React from 'react';
-import {Text, View, ScrollView, Keyboard, KeyboardAvoidingView,  StyleSheet, Image} from 'react-native';
-import {Card, Button, FormLabel, FormInput, FormValidationMessage} from 'react-native-elements';
+import {Text, View, ScrollView, Keyboard,  StyleSheet, Image} from 'react-native';
+import {Card, Button, FormLabel, FormInput} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import firebase from './firebase/firebase';

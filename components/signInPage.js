@@ -1,6 +1,5 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-//import {FormLabel} from "react-native-elements/src/index.d";
+import {View} from 'react-native';
 
 
 import LogInForm from "./loginForm";

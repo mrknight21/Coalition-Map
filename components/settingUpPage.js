@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, ScrollView, View, Picker, StyleSheet,Slider} from 'react-native';
-import {Button, Card, Divider, FormLabel, FormValidationMessage, FormInput, CheckBox} from 'react-native-elements';
+import {Button, Card, FormLabel, FormInput, CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
@@ -32,7 +32,7 @@ export default class settingUpPage extends React.Component {
             shape: 'face',
             complete: false,
             botsOn: false,
-            botsNum:0,
+            botsNum:1,
             botsMode:"random",
             botsColor:"green"
         };
@@ -48,15 +48,14 @@ export default class settingUpPage extends React.Component {
 
 
 
-    android_init(mapcode, number, center_lat, center_lng, color) {
+    android_init(mapcode, center_lat, center_lng, color) {
 
 
         const radius = 0.003;
 
-         let botSquad = {};
-         for (let i = 1; i <= number; i++) {
-        let id = "bot" + i;
-        console.log(id);
+        // let botSquad = {};
+        // for (let i = 1; i <= number; i++) {
+        //let id = "bot" + i;
 
         let la_random = Math.random();
         let lo_random = Math.random();
@@ -80,21 +79,21 @@ export default class settingUpPage extends React.Component {
 
 
 
-        console.log(id+" lat: "+bot_la);
-        console.log(id+" lng: "+bot_lo);
+        console.log(" lat: "+bot_la);
+        console.log(" lng: "+bot_lo);
 
 
             let bot = {
-                id: id,
+                id: 'bot',
                 color: color,
                 lat: bot_la,
                 lng: bot_lo
             };
         console.log(bot);
-        botSquad[id]= bot;
-        }
+        //botSquad[id]= bot;
+        //}
         console.log("finished!!");
-        return botSquad;
+        return bot;
     }
 
 
@@ -108,15 +107,15 @@ export default class settingUpPage extends React.Component {
     anonymous_login() {
         firebase.auth().signInAnonymously().catch(function (error) {
             // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            let errorCode = error.code;
+            let errorMessage = error.message;
             // ...
         });
         uid = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 // User is signed in.
-                var isAnonymous = user.isAnonymous;
-                var uid = user.uid;
+                let isAnonymous = user.isAnonymous;
+                let uid = user.uid;
                 console.log(this.props.navigation.state.params.join);
                 this.setState(() => ({uid: uid}));
                 if (!this.props.navigation.state.params.join) {
@@ -131,10 +130,10 @@ export default class settingUpPage extends React.Component {
 
 
     randomToken() {
-        var codes = [];
+        let codes = [];
         const elements = 'abcdefghijklmnopqrstuvwxyz11223344556677889900';
         // while (true) {
-        for (var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             let randomElement = elements[(Math.random() * 46) | 0];
             codes[i] = randomElement;
         }
@@ -155,8 +154,8 @@ export default class settingUpPage extends React.Component {
         const uid = this.state.uid;
         const mapcode = this.state.mapcode;
         const host = !this.props.navigation.state.params.join;
-        var lat = null;
-        var lng = null;
+        let lat = null;
+        let lng = null;
 
         switch (this.state.botsColor){
             case 'green':this.setState({botsMode: 'random'});
@@ -199,7 +198,7 @@ export default class settingUpPage extends React.Component {
 
             this.props.navigation.navigate('map', {mapcode: this.state.mapcode, uid: this.state.uid, host:host});
         });
-    }
+    };
 
     checkComplete() {
         if (this.state.name != "" && this.state.description != "") {
@@ -226,7 +225,6 @@ export default class settingUpPage extends React.Component {
                         prompt="Map Color"
                         style={styles.pickers}
                         itemStyle={styles.picker_items}
-                        // onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}
                     >
                         <Picker.Item label="red" value="red"/>
                         <Picker.Item label="blue" value="blue"/>
@@ -250,19 +248,19 @@ export default class settingUpPage extends React.Component {
                     />
 
 
-                    <FormLabel><Icon
-                        name='android'
-                        size={30}
-                        color='green'
-                    /> How many bots?</FormLabel>
-                    <Slider
-                        value={this.state.botsNum}
-                        onValueChange={(value) => this.setState({botsNum:value})}
-                        maximumValue={4}
-                        minimumValue={0}
-                        step={1}
-                    />
-                    <Text>Number: {this.state.botsNum}</Text>
+                    {/*<FormLabel><Icon*/}
+                        {/*name='android'*/}
+                        {/*size={30}*/}
+                        {/*color='green'*/}
+                    {/*/> How many bots?</FormLabel>*/}
+                    {/*<Slider*/}
+                        {/*value={this.state.botsNum}*/}
+                        {/*onValueChange={(value) => this.setState({botsNum:value})}*/}
+                        {/*maximumValue={4}*/}
+                        {/*minimumValue={0}*/}
+                        {/*step={1}*/}
+                    {/*/>*/}
+                    {/*<Text>Number: {this.state.botsNum}</Text>*/}
 
                     <FormLabel><Icon2
                         name='robot'
@@ -382,10 +380,6 @@ export default class settingUpPage extends React.Component {
                                 <Picker.Item label="star" value="grade"/>
                             </Picker>
                         </View>
-
-                        {/*<FormInput*/}
-                        {/*onChangeText={(text) => this.setState({shape: text.toLowerCase()})}*/}
-                        {/*/>*/}
                         {map_form}
                         <View>
                             <Button backgroundColor={buttonC} title="Submit" onPress={() => this.handleSubmit()}
