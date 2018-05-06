@@ -8,15 +8,19 @@ import { Icon, ButtonGroup} from 'react-native-elements';
 
 export default class MenuButtonGroup extends React.Component {
 
-    // Function which binds up to the parent Map component
+    // Function which binds up to the parent Map component to ensure the addMarker Card is opened.
     handleAddMarkerCard = () => {
         this.props.toggledStatus("add");
     };
 
+    // Function which binds up to parent Map component to open message modal.
     handleMessageButton = () => {
         this.props.messagesToggled();
     };
 
+    /*  Render method which renders addMarkerIcon and messagingIcon as the elements contained inside of ButtonGroup
+        Component
+    */
     render () {
         const addMarkerIcon = () => <Icon
             size={50}

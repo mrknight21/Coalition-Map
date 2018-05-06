@@ -5,8 +5,14 @@ import React from 'react';
 import {Text, View, ScrollView, Keyboard,  StyleSheet, Image} from 'react-native';
 import {Card, Button, FormLabel, FormInput} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 import firebase from './firebase/firebase';
+
+/*
+    LoginForm component:
+        This is the component where users can input their details in a login form to log in.
+ */
+
+// This method enables the keyboard to be dismissed where user touches the screen away from the
 Keyboard.dismiss();
 
 export default class LogginForm extends React.Component {
