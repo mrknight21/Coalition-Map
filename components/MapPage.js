@@ -14,9 +14,12 @@ import AddMarkerCard from './mapComponents/AddMarkerCard';
 
 /*
 MAP COMPONENT:
-This component is the Map component where all the user interaction will occur.
-Due to the considerable logic required for this component, further smaller components have been created and imported here.
-Note. For these smaller components, see the ./mapComponents folder.
+>   This component is the Map component where all the user interaction will occur.
+>   Due to the considerable logic required for this component, further smaller components have been created and imported
+    here.
+
+Note #1.    For these smaller components, see the ./mapComponents folder.
+
  */
 
 class mapPage extends React.Component {
@@ -40,7 +43,7 @@ class mapPage extends React.Component {
             }}/> : null
     });
 
-    //Constructor setting out all the states used in the Map component.
+    //  Constructor setting out all the states used in the Map component.
 
     constructor(props) {
         super(props);
@@ -76,16 +79,17 @@ class mapPage extends React.Component {
 
     // ---------------- Component lifecycle methods -----------------------------
 
-    // A. ComponentDidMount lifecycle, where actions taken when the component is loaded.
+    //  A. ComponentDidMount lifecycle, where actions taken when the component is loaded.
 
     componentDidMount() {
 
         try {
 
             /* Checks whether state is mounted, and if so does two things during 1 second intervals:
-                (1) Getting Robot/Zombie's and setting their locations.
-                (2) Using getCurrentPosition method on the geolocation to get the current location of user device
-                    and then firing the showPosition method()
+
+                (1)     Getting Robot/Zombie's and setting their locations.
+                (2)     Using getCurrentPosition method on the geolocation to get the current location of user device
+                        and then firing the showPosition method()
 
             */
             if (this.state.mounted) {
@@ -150,9 +154,9 @@ class mapPage extends React.Component {
                 }
             });
 
-            /* showPosition() method:
-                (1) using position obtained to get the exact latitude and longitude and storing to DB;
-                (2) updates
+            /* showPosition() method, which does the following:
+                    (1) using position obtained to get the exact latitude and longitude and storing to DB;
+                    (2) updates current Coordinates state.
 
              */
             const showPosition = (position) => {
@@ -170,13 +174,11 @@ class mapPage extends React.Component {
                 });
             };
 
-            // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
+            //  #1 Firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
             this.firebaseRetrieving('users', 'participants');
 
-            //    Second DB query to request landmark information and store to landmarks array in state
+            //  #2 DB query to request landmark information and store to landmarks array in state
             this.firebaseRetrieving('landmarks', 'landmarks');
-
-            this.accessMessages();
 
             // firebase.database().ref(this.mapcode + '/bots')
             //     .on('value', (snapshot) => {
@@ -196,8 +198,14 @@ class mapPage extends React.Component {
         }
     }
 
-    //When the map component dismounts, the interval updating current location is cleared
-    //And the map entry is deleted.
+    /* B. ComponentWillUnmount lifecycle: just before the component dismounts
+
+        (a) The user's current location is cleared.
+        (b) This is updated to the Firebase database.
+
+        Design rationale: This is to ensure that the map will only show active users, and prevent cluttering
+        of non-active users.
+    */
     componentWillUnmount() {
         try {
             this.setState(() => ({mounted: false}));
@@ -207,6 +215,17 @@ class mapPage extends React.Component {
             console.log("error", e);
         }
     }
+
+    // --------------------- Functions used in Map Component --------------------------------------------//
+
+    /*  This function allows toggling of Adding Marker Card.
+        (a) This opens a Card where you can write the description for a new landmark marker
+        (b) When the adding Marker Card is opened, a new marker is displayed +0.001 GPS longitude and latitude to the
+            user's location.
+
+        Design rationale:
+
+    */
 
     toggleAddMarkerCard = (command) => {
         if (command === 'add') {
