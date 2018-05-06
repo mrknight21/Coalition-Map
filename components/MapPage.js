@@ -425,7 +425,6 @@ class mapPage extends React.Component {
                         width: 300
                     }}
                 >
-                    {botmark}
                     {addMarkerCard}
                 </View>
                 <MenuButtonGroup
