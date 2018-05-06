@@ -7,6 +7,10 @@ export default class MenuButtonGroup extends React.Component {
         this.props.toggledStatus("add");
     };
 
+    handleMessageButton = () => {
+        this.props.messagesToggled();
+    }
+
     render () {
         const addMarkerIcon = () => <Icon
             size={50}
@@ -24,6 +28,7 @@ export default class MenuButtonGroup extends React.Component {
                 flex: 1,
                 justifyContent: 'space-between',
             }}
+            onPress={this.handleMessageButton}
             name="message"
             />
 
