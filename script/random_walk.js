@@ -100,13 +100,25 @@ function search_closest(bot, users) {
     idx=distances.indexOf(Math.min.apply(null,distances));
 
     target = users[idx];
-    decision ={tareget: ta};
+    return target;
 }
 
 // function check_attach() {
 //
 // }
 //
-// function move() {
-//
-// }
+function move(bot, user) {
+    radius = 0.0003;
+    new_coor = {lat:0, lng:0};
+    if (bot.lat-user.lat > 0){
+        new_coor.lat = bot.lat-radius;
+    }else {
+        new_coor.lat = bot.lat+radius;
+    }
+    if(bot.lng-user.lng > 0){
+        new_coor.lng = bot.lng-radius;
+    }else{
+        new_coor.lng = bot.lng+radius;
+    }
+    return new_coor;
+}

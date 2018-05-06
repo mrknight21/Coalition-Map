@@ -32,7 +32,7 @@ export default class settingUpPage extends React.Component {
             shape: 'face',
             complete: false,
             botsOn: false,
-            botsNum:0,
+            botsNum:1,
             botsMode:"random",
             botsColor:"green"
         };
@@ -48,15 +48,14 @@ export default class settingUpPage extends React.Component {
 
 
 
-    android_init(mapcode, number, center_lat, center_lng, color) {
+    android_init(mapcode, center_lat, center_lng, color) {
 
 
-        const radius = 0.0003;
+        const radius = 0.003;
 
-         let botSquad = {};
-         for (let i = 1; i <= number; i++) {
-        let id = "bot" + i;
-        console.log(id);
+        // let botSquad = {};
+        // for (let i = 1; i <= number; i++) {
+        //let id = "bot" + i;
 
         let la_random = Math.random();
         let lo_random = Math.random();
@@ -80,21 +79,21 @@ export default class settingUpPage extends React.Component {
 
 
 
-        console.log(id+" lat: "+bot_la);
-        console.log(id+" lng: "+bot_lo);
+        console.log(" lat: "+bot_la);
+        console.log(" lng: "+bot_lo);
 
 
             let bot = {
-                id: id,
+                id: 'bot',
                 color: color,
                 lat: bot_la,
                 lng: bot_lo
             };
         console.log(bot);
-        botSquad[id]= bot;
-        }
+        //botSquad[id]= bot;
+        //}
         console.log("finished!!");
-        return botSquad;
+        return bot;
     }
 
 
@@ -249,19 +248,19 @@ export default class settingUpPage extends React.Component {
                     />
 
 
-                    <FormLabel><Icon
-                        name='android'
-                        size={30}
-                        color='green'
-                    /> How many bots?</FormLabel>
-                    <Slider
-                        value={this.state.botsNum}
-                        onValueChange={(value) => this.setState({botsNum:value})}
-                        maximumValue={4}
-                        minimumValue={0}
-                        step={1}
-                    />
-                    <Text>Number: {this.state.botsNum}</Text>
+                    {/*<FormLabel><Icon*/}
+                        {/*name='android'*/}
+                        {/*size={30}*/}
+                        {/*color='green'*/}
+                    {/*/> How many bots?</FormLabel>*/}
+                    {/*<Slider*/}
+                        {/*value={this.state.botsNum}*/}
+                        {/*onValueChange={(value) => this.setState({botsNum:value})}*/}
+                        {/*maximumValue={4}*/}
+                        {/*minimumValue={0}*/}
+                        {/*step={1}*/}
+                    {/*/>*/}
+                    {/*<Text>Number: {this.state.botsNum}</Text>*/}
 
                     <FormLabel><Icon2
                         name='robot'

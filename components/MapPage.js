@@ -4,6 +4,9 @@ import {Icon} from 'react-native-elements';
 import MapView, {Marker} from 'react-native-maps';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from './firebase/firebase';
+import Android_bot from './Android_bot';
+
+
 
 import MenuButtonGroup from './mapComponents/MenuButtonGroup';
 import PersonMarker from './mapComponents/PersonMarker';
@@ -34,7 +37,7 @@ class mapPage extends React.Component {
         this.state = {
             participants: [],
             landmarks: [],
-            bots: [],
+            bots: null,
             addMarker: {
                 addMarkerDescription: "default",
                 addMarkerCardVisibility: true,
@@ -56,6 +59,7 @@ class mapPage extends React.Component {
         };
         this.mapcode = this.props.navigation.state.params.mapcode;
         this.uid = this.props.navigation.state.params.uid;
+        this.host = this.props.navigation.state.params.host;
     }
 
     // // ---------------- Component lifecycle methods -----------------------------
@@ -65,8 +69,60 @@ class mapPage extends React.Component {
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
             seconds and then firing the showPosition method() */
 
-            if (this.state.mounted) {
-                this.interval = setInterval(() => {
+
+            if(this.state.mounted) {
+                this.interval = setInterval(() =>{
+
+
+
+                    if(this.host && this.state.participants.length>0 && this.state.bots !== null) {
+                    firebase.database().ref(this.mapcode + '/users')
+                        .once('value', (snapshot) => {
+                            const users = [];
+                            snapshot.forEach((childSnapshot) => {
+                                users.push({
+                                    id: childSnapshot.key,
+                                    nameX: childSnapshot.child("name").val().toString(),
+                                    description: childSnapshot.child('description').val().toString(),
+                                    lat: childSnapshot.child('lat').val().toString(),
+                                    lng: childSnapshot.child('lng').val().toString(),
+                                    shapeX: childSnapshot.child('shape').val().toString(),
+                                    colorX: childSnapshot.child('color').val().toString(),
+                                });
+                            });
+                            console.log("line 93:"+ users);
+                                    let bot = this.state.bots;
+                                    let distances = [];
+                                    for(let j =0; j<users.length;j++){
+                                        distances.push((Math.abs(users[j].lat-bot.lat)+Math.abs(users[j].lng-bot.lng)))
+                                    }
+                                    console.log(distances);
+                                    const idx=distances.indexOf(Math.min.apply(null,distances));
+                                    console.log(idx);
+                                    let closest_user = users[idx];
+                                    console.log(closest_user);
+                                    const radius = 0.0003;
+                                    let new_coor = {lat:0, lng:0};
+                                    if ((bot.lat-closest_user.lat) > 0){
+                                        new_coor.lat = bot.lat-radius;
+                                    }else {
+                                        new_coor.lat = bot.lat+radius;
+                                    }
+                                    if((bot.lng-closest_user.lng) > 0){
+                                        new_coor.lng = bot.lng-radius;
+                                    }else{
+                                        new_coor.lng = bot.lng+radius;
+                                    }
+
+                                    //let coor = this.android_move(bot, closest_user);
+                                    bot.lat = new_coor.lat;
+                                    bot.lng = new_coor.lng;
+                                    this.setState({bots:bot});
+                                    firebase.database().ref(this.mapcode + "/bots/" + bot.id).set(bot);
+                            }, (error) => {
+                            console.log("Error", error);
+                        });
+            }
                     navigator.geolocation.getCurrentPosition(showPosition);
 
 
@@ -105,20 +161,16 @@ class mapPage extends React.Component {
 
             firebase.database().ref(this.mapcode + '/bots')
                 .on('value', (snapshot) => {
-                    const bots = [];
-                    snapshot.forEach((childSnapshot) => {
-                        bots.push({
-                            id: childSnapshot.key,
-                            lat: childSnapshot.child('lat').val(),
-                            lng: childSnapshot.child('lng').val(),
-                            color: childSnapshot.child('color').val().toString(),
-                        });
-                    });
+                    let bots;
+                        bots={
+                            id: snapshot.child('id').val().toString(),
+                            lat: snapshot.child('lat').val(),
+                            lng: snapshot.child('lng').val(),
+                            color: snapshot.child('color').val().toString(),
+                        };
                     console.log(bots);
-                    this.setState(() => ({bots: bots}));
-                }, (error) => {
-                    console.log("Error", error);
-                });
+                    this.setState({bots: bots});
+                    });
 
         } catch (e) {
             console.log("error", e);
@@ -158,7 +210,6 @@ class mapPage extends React.Component {
         }
         return codes.join("");
     }
-
     addNewMarkerToDB = () => {
         const randomCode = this.randomToken();
 
@@ -218,6 +269,30 @@ class mapPage extends React.Component {
         //only show add marker option if button pressed.
         let addMarkerCard = null;
         let addMarkerItem = null;
+        let botmark = null;
+
+        console.log(this.state.bots);
+
+
+        if(this.state.bots !== null){
+            botmark = (
+                <Marker
+                    key={this.state.bots.id}
+                    title={this.state.bots.id}
+                    coordinate={{
+                        latitude: parseFloat(this.state.bots.lat),
+                        longitude: parseFloat(this.state.bots.lng),
+                    }}
+                >
+                    <Icon
+                        name='android'
+                        color={this.state.bots.color}
+                        raised={true}
+                        reverse={true}
+                    />
+                </Marker>
+            );
+        }
 
         if (this.state.addMarkerCardVisibility) {
 
@@ -272,23 +347,6 @@ class mapPage extends React.Component {
                         />
                     ))}
 
-                    {this.state.bots.map((bot) => (
-                        <Marker
-                            key={bot.id}
-                            title={bot.id}
-                            coordinate={{
-                                latitude: parseFloat(bot.lat),
-                                longitude: parseFloat(bot.lng),
-                            }}
-                        >
-                            <Icon
-                                name='android'
-                                color={bot.color}
-                                raised={true}
-                                reverse={true}
-                            />
-                        </Marker>
-                    ))}
                     {addMarkerItem}
                 </MapView>
                 <View
@@ -298,6 +356,7 @@ class mapPage extends React.Component {
                         width: 300
                     }}
                 >
+                    {botmark}
                     {addMarkerCard}
                 </View>
                 <MenuButtonGroup
