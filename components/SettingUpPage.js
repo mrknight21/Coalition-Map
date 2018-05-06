@@ -32,7 +32,7 @@ export default class settingUpPage extends React.Component {
             shape: 'face',
             complete: false,
             botsOn: false,
-            botsNum:1,
+            botsNum:0,
             botsMode:"random",
             botsColor:"green"
         };
@@ -48,14 +48,14 @@ export default class settingUpPage extends React.Component {
 
 
 
-    android_init(mapcode, center_lat, center_lng, color) {
+    android_init(mapcode, number, center_lat, center_lng, color) {
 
 
         const radius = 0.003;
 
-        // let botSquad = {};
-        // for (let i = 1; i <= number; i++) {
-        //let id = "bot" + i;
+        let botSquad = {};
+        for (let i = 1; i <= number; i++) {
+        let id = "bot" + i;
 
         let la_random = Math.random();
         let lo_random = Math.random();
@@ -66,15 +66,15 @@ export default class settingUpPage extends React.Component {
        let bot_lo;
 
        if(la_random >0.5){
-           bot_la = parseFloat(center_lat + radius).toFixed(7);
+           bot_la = parseFloat(center_lat + radius*10*Math.random()).toFixed(7);
        }else {
-           bot_la = parseFloat(center_lat - radius).toFixed(7);
+           bot_la = parseFloat(center_lat - radius*10*Math.random()).toFixed(7);
        }
 
        if(lo_random >0.5){
-           bot_lo = parseFloat(center_lng + radius).toFixed(7);
+           bot_lo = parseFloat(center_lng + radius*10*Math.random()).toFixed(7);
        }else{
-           bot_lo = parseFloat(center_lng - radius).toFixed(7);
+           bot_lo = parseFloat(center_lng - radius*10*Math.random()).toFixed(7);
        }
 
 
@@ -84,16 +84,16 @@ export default class settingUpPage extends React.Component {
 
 
             let bot = {
-                id: 'bot',
+                id: id,
                 color: color,
                 lat: bot_la,
                 lng: bot_lo
             };
         console.log(bot);
-        //botSquad[id]= bot;
-        //}
+        botSquad[id]= bot;
+        }
         console.log("finished!!");
-        return bot;
+        return botSquad;
     }
 
 
@@ -248,19 +248,19 @@ export default class settingUpPage extends React.Component {
                     />
 
 
-                    {/*<FormLabel><Icon*/}
-                        {/*name='android'*/}
-                        {/*size={30}*/}
-                        {/*color='green'*/}
-                    {/*/> How many bots?</FormLabel>*/}
-                    {/*<Slider*/}
-                        {/*value={this.state.botsNum}*/}
-                        {/*onValueChange={(value) => this.setState({botsNum:value})}*/}
-                        {/*maximumValue={4}*/}
-                        {/*minimumValue={0}*/}
-                        {/*step={1}*/}
-                    {/*/>*/}
-                    {/*<Text>Number: {this.state.botsNum}</Text>*/}
+                    <FormLabel><Icon
+                        name='android'
+                        size={30}
+                        color='green'
+                    /> How many bots?</FormLabel>
+                    <Slider
+                        value={this.state.botsNum}
+                        onValueChange={(value) => this.setState({botsNum:value})}
+                        maximumValue={10}
+                        minimumValue={0}
+                        step={1}
+                    />
+                    <Text>Number: {this.state.botsNum}</Text>
 
                     <FormLabel><Icon2
                         name='robot'
