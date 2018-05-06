@@ -66,8 +66,28 @@ class mapPage extends React.Component {
     componentDidMount() {
 
         try {
+
+            // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
+
+            const showPosition = (position) => {
+
+                this.setState(() => ({
+                    currentCoordinates: {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }
+                }));
+
+                if (this.state.mounted) {
+                    firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                }
+            };
+
             /* Using getCurrentPosition method on the geolocation to get the current location of user device every 10
-            seconds and then firing the showPosition method() */
+seconds and then firing the showPosition method() */
 
 
             if(this.state.mounted) {
@@ -124,7 +144,8 @@ class mapPage extends React.Component {
                         });
             }
                     navigator.geolocation.getCurrentPosition(showPosition);
-                    }, 1000);
+                    console.log(this.state.participants)
+                }, 1000);
             }
 
             this.props.navigation.setParams({
@@ -132,24 +153,6 @@ class mapPage extends React.Component {
                     clearInterval(this.interval)
                 }
             });
-
-            // showPosition() method using position obtained to get the exact latitude and longitude and storing to DB
-
-            const showPosition = (position) => {
-
-
-                this.setState(() => ({
-                    currentCoordinates: {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    }
-                }));
-
-                firebase.database().ref(this.mapcode + '/users/' + this.uid).update({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                });
-            };
 
             // firebase.database() query to get the details of the Map and store all users who need to be displayed in the State
             this.firebaseRetrieving('users', 'participants');

@@ -13,6 +13,7 @@
     "react-test-renderer": "^16.3.2"
   },
   "devDependencies": {
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^22.4.3"
   },
   "scripts": {
@@ -20,6 +21,9 @@
     "start": "node server.js"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "moduleNameMapper": {
+      ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "identity-obj-proxy"
+    }
   }
 }
