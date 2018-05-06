@@ -46,4 +46,35 @@ Our application is made up of three main components.
 1. Setting up Page
 2. Map page
 
+## Testing with JEST / manual testing
+
+###JEST
+
+Tests have been conducted using JEST (React Snapshot testing platform).
+These have been used throughout the development process to test components, with the focus in ensuring
+the correct rendering of the components. 
+
+These are located in the "Test" folder.
+
+Please note that the mapComponentTests have been the main focus given that these components required frequent changes during development.
+
+### Manual testing
+
+Significant manual testing was required to ensure compatibility between iOS and Android.
+
+In particular emphasis was paid into ensuring that the map and element components were displayed properly and uniformly.
+
+This was no small task and there was significant development bugs which affected one platform or the other.
+
+For example.    Android had issues displaying certain third party component such as Material-ui components.
+                iOS had compatibility issues with the stock React-native components where certain components such as the picker would not be displayed properly in the same way as Android requiring amendments to the code.
+               
+
+## Notes and comments
+
+For detailed notes and design rationale, please check the inline comments in the components. 
+Please note that the map component has been commented in more detail, reflecting the fact that this component was the main focus of
+this project.
+
+
 If there are any issues in the installation process please contact James Won at jwon117@aucklanduni.ac.nz.
