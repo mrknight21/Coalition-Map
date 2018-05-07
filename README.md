@@ -75,6 +75,3 @@ For example.    Android had issues displaying certain third party component such
 For detailed notes and design rationale, please check the inline comments in the components. 
 Please note that the map component has been commented in more detail, reflecting the fact that this component was the main focus of
 this project.
-
-
-If there are any issues in the installation process please contact James Won at jwon117@aucklanduni.ac.nz.
