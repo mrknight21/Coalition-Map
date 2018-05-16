@@ -48,7 +48,7 @@ export default class LogginForm extends React.Component {
                 <View style={styles.logoContainer}>
                     <Image
                     style={styles.logo}
-                    source={require('../assets/map_icon.png')}/>
+                    source={require('../assets/map_icon-min.png')}/>
                 </View>
 
                 <Card
